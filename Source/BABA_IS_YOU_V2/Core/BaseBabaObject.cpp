@@ -31,7 +31,35 @@ void ABaseBabaObject::ApplyRuleOnObject(UBabaRule* Rule)
 {
 	UBabaRuleEffect* temp = Rule->GetRuleEffect(this);
 	temp->RegisterTarget(this);
-	AppliedEffects.Add(temp);
+	AppliedRules.Add(Rule);
+
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->RegisterTargetForRule(Rule, this);
+	}
+
+}
+
+void ABaseBabaObject::RemoveRuleEffectFromObject(UBabaRule* Rule)
+{
+	if (AppliedRules.Contains(Rule))
+	{
+		int32 index = AppliedRules.Find(Rule);
+
+		FString RemovedName = AppliedEffects[index]->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("BABA REMOVE : trying to remove %s at index %d"), *RemovedName, index);
+		AppliedEffects[index]->UnRegisterTarget();
+		AppliedRules.RemoveAt(index);
+
+		ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (GM)
+		{
+			GM->UnRegisterTargetFormRule(Rule, this);
+		}
+	}
 }
 
 void ABaseBabaObject::SetTraceChannelResponce(ECollisionChannel Channel, ECollisionResponse Responce)
@@ -41,7 +69,11 @@ void ABaseBabaObject::SetTraceChannelResponce(ECollisionChannel Channel, ECollis
 
 bool ABaseBabaObject::Push(EPushDirection Direction)
 {
+	UE_LOG(LogTemp,Warning,TEXT("PUSH EVENT CHECK.!"))
+
 	if (!CanBePushed()) return false;//this means we have an effect that prevents the pushing, other wise it will be false if blocked
+
+	UE_LOG(LogTemp, Warning, TEXT("PUSH EVENT TRIGGER.!"))
 
 	FVector NextGrid;
 	ABaseBabaObject* NextTile = GetObjectInGrid(Direction,NextGrid);

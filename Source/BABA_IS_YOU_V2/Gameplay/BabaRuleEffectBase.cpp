@@ -27,3 +27,11 @@ void UBabaRuleEffect::RegisterTarget(ABaseBabaObject* targetObject)
 	targetObject->AppliedEffects.Add(this);
 	AffectStarted();
 }
+
+void UBabaRuleEffect::UnRegisterTarget()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s : EFFECT Removed!"), __FUNCTION__);
+	AffectedObject->AppliedEffects.Remove(this);
+	AffectedObject = nullptr;
+	MarkAsGarbage();
+};

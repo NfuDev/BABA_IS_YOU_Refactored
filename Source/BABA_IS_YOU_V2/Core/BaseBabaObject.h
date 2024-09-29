@@ -63,8 +63,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BabaIsYou")
 	TArray<UBabaRuleEffect*> AppliedEffects;
 
+	/*mapped one to one with the effects so we can easily remove the effects wihtout searching*/
+	UPROPERTY()
+	TArray<UBabaRule*> AppliedRules;
+
 	UFUNCTION(BlueprintCallable, Category = "Baba Functions")
 	void ApplyRuleOnObject(UBabaRule* Rule);
+
+	UFUNCTION(BlueprintCallable, Category = "Baba Functions")
+	void RemoveRuleEffectFromObject(UBabaRule* Rule);
+
+	UFUNCTION(BlueprintCallable, Category = "Baba Functions")
+	FORCEINLINE int32 GetAppliedEffectCount() { return AppliedEffects.Num(); }
 
 	void SetTraceChannelResponce(ECollisionChannel Channel, ECollisionResponse Responce);//use instead of the set tracable
 

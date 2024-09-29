@@ -28,10 +28,19 @@ void UEffect_IsYou::AffectStarted()
 
 		PC->PushInputComponent(InputComponent);
 	}
+
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->RegisterYouObject(AffectedObject);
+	}
 }
 
 void UEffect_IsYou::MoveRight()
 {
+	if (!AffectedObject) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 
 	FVector NextGrid;
@@ -54,6 +63,8 @@ void UEffect_IsYou::MoveRight()
 
 void UEffect_IsYou::MoveLeft()
 {
+	if (!AffectedObject) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
 	ABaseBabaObject* NextTile = AffectedObject->GetObjectInGrid(EPushDirection::Left, NextGrid);
@@ -74,6 +85,8 @@ void UEffect_IsYou::MoveLeft()
 
 void UEffect_IsYou::MoveUP()
 {
+	if (!AffectedObject) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
 	ABaseBabaObject* NextTile = AffectedObject->GetObjectInGrid(EPushDirection::UP, NextGrid);
@@ -94,6 +107,8 @@ void UEffect_IsYou::MoveUP()
 
 void UEffect_IsYou::MoveDown()
 {
+	if (!AffectedObject) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
 	ABaseBabaObject* NextTile = AffectedObject->GetObjectInGrid(EPushDirection::Down, NextGrid);

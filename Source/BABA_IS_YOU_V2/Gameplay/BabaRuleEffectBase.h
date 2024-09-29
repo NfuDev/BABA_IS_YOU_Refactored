@@ -6,7 +6,7 @@
 #include "BabaRuleEffectBase.generated.h"
 
 class ABaseBabaObject;
-
+class UBabaRule;
 /*
 * this is the base effect class that has the main interface with the game logics
 */
@@ -29,12 +29,14 @@ public:
 	ABaseBabaObject* AffectedObject;
 
 	void RegisterTarget(ABaseBabaObject* targetObject);
+	
 
 	/*interactions*/
 	virtual void PreOverlap(ABaseBabaObject* IncomingObject) {};
-	virtual void OnOverlap(ABaseBabaObject* OverlappedObject) {};
+	virtual void OnOverlap(AActor* OverlappedObject) {};
 	virtual void RequestMove(FVector Direction, TFunction<void()> Callback) { Callback; };
 	virtual bool IsPushable() { return true; }
+	virtual void UnRegisterTarget();//default behaviour is to nullify the affected target and mark as garbage so the GC would pick it up in the next cycle
 	/*interactions*/
 	
 };

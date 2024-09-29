@@ -38,3 +38,36 @@ void UEffect_IsWin::OnOverlap(AActor* OverlappedObject)
 }
 
 //######## IS WIN #######################
+
+//######## IS KILL #######################
+
+void UEffect_IsKill::AffectStarted()
+{
+	AffectedObject->OnBabaObjectOverlap.AddUObject(this, &UEffect_IsKill::OnOverlap);
+}
+
+void UEffect_IsKill::OnOverlap(AActor* OverlappedObject)
+{
+	ABaseBabaObject* AsBabaObject = Cast<ABaseBabaObject>(OverlappedObject);
+	if (AsBabaObject)
+	{
+		TArray<UBabaRuleEffect*> IsYouEffects;
+		IsYouEffects = AsBabaObject->AppliedEffects.FilterByPredicate([](UBabaRuleEffect* itr)
+			{
+				return itr->IsA(UEffect_IsYou::StaticClass());
+			});
+
+		if (IsYouEffects.Num() > 0)
+		{
+			ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+			if (GM)
+			{
+				GM->BabaGameFinished(true);
+			}
+
+		}
+	}
+}
+
+//######## IS KILL #######################

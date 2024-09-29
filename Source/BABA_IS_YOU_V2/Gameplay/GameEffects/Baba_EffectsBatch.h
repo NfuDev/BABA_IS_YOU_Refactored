@@ -22,6 +22,21 @@ class BABA_IS_YOU_V2_API UEffect_IsWin : public UBabaRuleEffect
 	
 	virtual void AffectStarted() override;
 
-	void OnOverlap(AActor* OverlappedObject);
+	virtual void OnOverlap(AActor* OverlappedObject) override;
+
+};
+
+
+/*
+* this effects give all the (Is You) objects a Lose if they overlapped with the affected object by this effect
+*/
+UCLASS()
+class BABA_IS_YOU_V2_API UEffect_IsKill : public UBabaRuleEffect
+{
+	GENERATED_BODY()
+
+	virtual void AffectStarted() override;
+
+	virtual void OnOverlap(AActor* OverlappedObject) override;
 
 };

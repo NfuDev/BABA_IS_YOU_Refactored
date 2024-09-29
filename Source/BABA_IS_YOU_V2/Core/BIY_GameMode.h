@@ -10,6 +10,7 @@
 
 
 class UBabaRuleEffect;
+class UBabaRule;
 
 /*holds two effects that contradict each other*/
 USTRUCT(BlueprintType)
@@ -24,6 +25,19 @@ struct FContradictionList
 
 	UPROPERTY(EditAnywhere, Category = "Baba Structs")
 	TSubclassOf<UBabaRuleEffect> Effect2;
+
+};
+
+/*holds all the targets that the rule has applid to*/
+USTRUCT(BlueprintType)
+struct FRuleTargets
+{
+	GENERATED_BODY()
+
+	FRuleTargets() {}
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Baba Structs")
+	TArray<class ABaseBabaObject*> RuleTargets;
 
 };
 
@@ -87,4 +101,29 @@ public:
 	/*called when the game is finished*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Gameplay")
 	void BabaGameFinished(bool bWin);
+
+	/*this will holds how many object is a 'YOU' and when this list is cleared the game is over*/
+	UPROPERTY()
+	TArray<class ABaseBabaObject*> IsYouObjects;
+	void RegisterYouObject(ABaseBabaObject* newObject);
+	void UnRegisterYouObject(ABaseBabaObject* Object);
+
+
+	/*saves what rule affects which objects*/
+	UPROPERTY()
+	TMap<UBabaRule*, FRuleTargets> Rules_Targets_Map;
+	void RegisterTargetForRule(UBabaRule* rule, ABaseBabaObject* target);
+	void UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* target);
+
+
+
+	//###################################################
+	//################# DEBUGGING #######################
+	//###################################################
+
+	UFUNCTION(BlueprintCallable, Category = "Baba Is You|Debugging")
+	FORCEINLINE int32 IsYouCount() { return IsYouObjects.Num(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Baba Is You|Debugging")
+	FORCEINLINE TMap<UBabaRule*, FRuleTargets> GetRuleAndTargets() { return Rules_Targets_Map; };
 };

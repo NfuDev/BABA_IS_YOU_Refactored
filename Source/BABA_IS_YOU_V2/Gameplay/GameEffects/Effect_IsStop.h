@@ -16,4 +16,6 @@ class BABA_IS_YOU_V2_API UEffect_IsStop : public UBabaRuleEffect
 
 	virtual void AffectStarted() override;
 	virtual bool IsPushable() override { return false; };
+
+	//virtual void UnRegisterTarget(ABaseBabaObject* targetObject) override;
 };

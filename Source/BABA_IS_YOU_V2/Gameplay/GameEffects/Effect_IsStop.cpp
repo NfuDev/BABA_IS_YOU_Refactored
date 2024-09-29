@@ -13,3 +13,15 @@ void UEffect_IsStop::AffectStarted()
 	ECollisionChannel Channle = UEngineTypes::ConvertToCollisionChannel(GM->PushChannel);
 	AffectedObject->SetTraceChannelResponce(Channle, ECR_Block);
 }
+
+//void UEffect_IsStop::UnRegisterTarget(ABaseBabaObject* targetObject)
+//{
+//
+//	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+//
+//	if (!GM) return;
+//	ECollisionChannel Channle = UEngineTypes::ConvertToCollisionChannel(GM->PushChannel);
+//	AffectedObject->SetTraceChannelResponce(Channle, ECR_Ignore);
+//
+//	Super::UnRegisterTarget(targetObject);
+//}
