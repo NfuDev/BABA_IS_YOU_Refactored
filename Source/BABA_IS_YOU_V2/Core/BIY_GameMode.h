@@ -84,4 +84,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Baba Core| Tracing")
 	TEnumAsByte <ETraceTypeQuery> PushChannel;
 
+	/*called when the game is finished*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Gameplay")
+	void BabaGameFinished(bool bWin);
 };

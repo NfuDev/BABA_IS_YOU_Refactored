@@ -103,7 +103,7 @@ void ABaseBabaObject::CheckForOverlap()
 
 	if (bHit)
 	{
-		//
+		Cast<ABaseBabaObject>(GridCheckResults.GetActor())->OnBabaObjectOverlap.Broadcast(this);
 	}
 }
 

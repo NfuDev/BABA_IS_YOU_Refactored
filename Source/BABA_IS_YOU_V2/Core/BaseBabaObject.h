@@ -25,7 +25,7 @@ DECLARE_CYCLE_STAT(TEXT("Post Location Changed"), STAT_PostLocationChanged, STAT
 #endif
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBabaEvent, AActor*, OverlappedObject);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBabaEvent, AActor*);
 
 UENUM(BlueprintType)
 enum class EPushDirection : uint8
@@ -90,7 +90,6 @@ public:
 	ABaseBabaObject* GetObjectInGrid(EPushDirection Direction, FVector& outLoc);
 
 	
-	UPROPERTY()
 	FBabaEvent OnBabaObjectOverlap;
 
 private:
