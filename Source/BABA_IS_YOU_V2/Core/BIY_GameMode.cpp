@@ -28,9 +28,9 @@ void ABIY_GameMode::RegisterYouObject(ABaseBabaObject* newObject)
 //probably will need to update to use classes 
 void ABIY_GameMode::UnRegisterYouObject(ABaseBabaObject* Object)
 {
-	if (IsYouObjects.ContainsByPredicate([Object](ABaseBabaObject* itr) {return itr == Object; }))
+	if (IsYouObjects.Contains(Object))
 	{
-		IsYouObjects.Remove(Object);
+		IsYouObjects.Remove(Object); 
 	}	
 }
 
