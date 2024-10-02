@@ -7,7 +7,6 @@
 ABIY_GameMode::ABIY_GameMode()
 {
 	PlayerControllerClass = ABabaPlayerController::StaticClass();
-	MoveStacIndex = 0;
 }
 
 void ABIY_GameMode::BeginPlay()
@@ -25,7 +24,7 @@ void ABIY_GameMode::BeginPlay()
 		}
 	}
 
-	TryUpdateBabaGameState();//stores the initial states
+	InitObjectsStates();//stores the initial states
 }
 
 
@@ -83,5 +82,13 @@ void ABIY_GameMode::UndoMove()
 	for (auto& itr : BabaObjectsInLevel)
 	{
 		itr->OnBabaUndo();
+	}
+}
+
+void ABIY_GameMode::InitObjectsStates()
+{
+	for (auto& itr : BabaObjectsInLevel)
+	{
+		itr->CachedObjectState.UpdateStructWithBaba(itr);
 	}
 }

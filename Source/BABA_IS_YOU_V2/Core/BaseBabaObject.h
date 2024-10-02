@@ -59,18 +59,18 @@ struct FBabaObjectState
 		UpdateStructWithBaba(BabaObject);
 	}
 
-	FBabaObjectState(const FBabaObjectState& other)
-	{
-		ObjectLocation = other.ObjectLocation;
-		ObjectVisual = other.ObjectVisual;
-		TopTile = other.TopTile;
-		BottomTile = other.BottomTile;
-		RightTile = other.RightTile;
-		LeftTile = other.LeftTile;
-		LastSavedVisualsID = other.LastSavedVisualsID;
-		bIsValidState = other.bIsValidState;
-		StateInstances = other.StateInstances;
-	}
+	//FBabaObjectState(const FBabaObjectState& other)
+	//{
+	//	ObjectLocation = other.ObjectLocation;
+	//	ObjectVisual = other.ObjectVisual;
+	//	TopTile = other.TopTile;
+	//	BottomTile = other.BottomTile;
+	//	RightTile = other.RightTile;
+	//	LeftTile = other.LeftTile;
+	//	LastSavedVisualsID = other.LastSavedVisualsID;
+	//	bIsValidState = other.bIsValidState;
+	//	StateInstances = other.StateInstances;
+	//}
 
 
 	void UpdateStructWithBaba(ABaseBabaObject* BabaObject);
@@ -178,6 +178,8 @@ public:
 	UPROPERTY()
 	TArray<FBabaObjectState> ObjectStates;
 
+	/*caching the last state before we go to next grid*/
+	FBabaObjectState CachedObjectState;
 	void RecordBabaObjectState();
 	void OnBabaUndo();
 

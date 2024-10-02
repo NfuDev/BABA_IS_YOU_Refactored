@@ -105,27 +105,19 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 
 void ABaseBabaObject::RecordBabaObjectState()
 {
-	ObjectStates.Add(FBabaObjectState(this));
+	ObjectStates.Emplace(CachedObjectState);
 	bBabaObjectUpdated = true;
+	CachedObjectState.UpdateStructWithBaba(this);
 }
 
 void ABaseBabaObject::OnBabaUndo()
 {
 	int32 index = ObjectStates.Num() - 1;
-
-	if (bBabaObjectUpdated && ObjectStates.Num() > 0)
-	{
-		index = ObjectStates.Num() - 1;
-		ObjectStates.RemoveAt(index);
-		bBabaObjectUpdated = false;
-	}
-
-
 	if (ObjectStates.IsValidIndex(index))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UNDO INDEX %d"), index);
 		ObjectStates[index].UpdateBabaWithStruct(this);
-
+		CachedObjectState.UpdateStructWithBaba(this);
 		if(index > 0)
 		  ObjectStates.RemoveAt(index);
 	}

@@ -122,7 +122,7 @@ public:
 	/*called after each change in the game state to store it for undo*/
 	void TryUpdateBabaGameState();
 	void UndoMove();
-	int32 MoveStacIndex;
+	void InitObjectsStates();
 
 	//###################################################
 	//################# DEBUGGING #######################
