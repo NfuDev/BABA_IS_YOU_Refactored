@@ -3,6 +3,7 @@
 
 #include "Baba_EffectsBatch.h"
 #include "../..//Core/BaseBabaObject.h"
+#include "../..//Core/BIY_GameMode.h"
 #include "Delegates/Delegate.h"
 #include "Effect_IsYou.h"
 
@@ -63,7 +64,8 @@ void UEffect_IsKill::OnOverlap(AActor* OverlappedObject)
 
 			if (GM)
 			{
-				GM->BabaGameFinished(true);
+				GM->UnRegisterYouObject(AsBabaObject);
+				AsBabaObject->UpdateObjectState(EBabaObjectState::Dead);
 			}
 
 		}

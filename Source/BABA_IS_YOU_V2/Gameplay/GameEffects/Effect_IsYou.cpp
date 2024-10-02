@@ -3,19 +3,32 @@
 
 #include "Effect_IsYou.h"
 #include "../..//Core/BaseBabaObject.h"
+#include "../../Core/BabaPlayerController.h"
+#include "../..//Core/BIY_GameMode.h"
 
 void UEffect_IsYou::AffectStarted()
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	if (PC)
-	{
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-		if (!InputComponent)
+	if (PC && GM)
+	{
+		ABabaPlayerController* AsbabaPC = Cast<ABabaPlayerController>(PC);
+		if (AsbabaPC)
 		{
-			static const FName InputCompName("BabaController");
+			AsbabaPC->BindIsYouEffectInputSystem(this);
+			UE_LOG(LogTemp, Warning, TEXT("Input Binded For Object %s"), *AffectedObject->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("BABA DEBUG : Player Controller set in the game mode is not the right type"));
+		}
+		/*if (!InputComponent)
+		{
+			static const FName InputCompName(FString("BabaController_" + AffectedObject->GetName()));
 		    InputComponent = NewObject<UInputComponent>(this, InputCompName);
 		    InputComponent->bBlockInput = false;
-		    InputComponent->Priority = 5;
+		    InputComponent->Priority = GM->IsYouCount();
 
 			if (UInputDelegateBinding::SupportsInputDelegate(GetClass()))
 				UBIY_BindingUtil::BindInputDelegatesToObject(GetClass(), InputComponent, this);
@@ -25,21 +38,17 @@ void UEffect_IsYou::AffectStarted()
 			InputComponent->BindAction("Up", IE_Pressed, this, &UEffect_IsYou::MoveUP);
 			InputComponent->BindAction("Down", IE_Pressed, this, &UEffect_IsYou::MoveDown);
 		}
-
-		PC->PushInputComponent(InputComponent);
-	}
-
-	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM)
-	{
+		AffectedObject->bBlockInput = false;
+		PC->PushInputComponent(InputComponent);*/
 		GM->RegisterYouObject(AffectedObject);
+
 	}
 }
 
 void UEffect_IsYou::MoveRight()
 {
 	if (!AffectedObject) return;
+	if (!(AffectedObject->BabaObjectState == EBabaObjectState::ALive)) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 
@@ -50,12 +59,14 @@ void UEffect_IsYou::MoveRight()
 	{
 		AffectedObject->SetActorLocation(NextGrid);
 		AffectedObject->CheckForOverlap();//if we got here it means there is no object in that grid or there is a none pushable or none stop object
+		AffectedObject->bBabaObjectUpdated = true;
 	}
 	else
 	{
 		if (NextTile->Push(EPushDirection::Right))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->bBabaObjectUpdated = true;
 		}
 	}
 
@@ -64,6 +75,7 @@ void UEffect_IsYou::MoveRight()
 void UEffect_IsYou::MoveLeft()
 {
 	if (!AffectedObject) return;
+	if (!(AffectedObject->BabaObjectState == EBabaObjectState::ALive)) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
@@ -73,12 +85,14 @@ void UEffect_IsYou::MoveLeft()
 	{
 		AffectedObject->SetActorLocation(NextGrid);
 		AffectedObject->CheckForOverlap();
+		AffectedObject->bBabaObjectUpdated = true;
 	}
 	else
 	{
 		if (NextTile->Push(EPushDirection::Left))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->bBabaObjectUpdated = true;
 		}
 	}
 }
@@ -86,6 +100,7 @@ void UEffect_IsYou::MoveLeft()
 void UEffect_IsYou::MoveUP()
 {
 	if (!AffectedObject) return;
+	if (!(AffectedObject->BabaObjectState == EBabaObjectState::ALive)) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
@@ -95,12 +110,14 @@ void UEffect_IsYou::MoveUP()
 	{
 		AffectedObject->SetActorLocation(NextGrid);
 		AffectedObject->CheckForOverlap();
+		AffectedObject->bBabaObjectUpdated = true;
 	}
 	else
 	{
 		if (NextTile->Push(EPushDirection::UP))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->bBabaObjectUpdated = true;
 		}
 	}
 }
@@ -108,6 +125,7 @@ void UEffect_IsYou::MoveUP()
 void UEffect_IsYou::MoveDown()
 {
 	if (!AffectedObject) return;
+	if (!(AffectedObject->BabaObjectState == EBabaObjectState::ALive)) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Called : ") __FUNCTION__);
 	FVector NextGrid;
@@ -117,14 +135,16 @@ void UEffect_IsYou::MoveDown()
 	{
 		AffectedObject->SetActorLocation(NextGrid);
 		AffectedObject->CheckForOverlap();
+		AffectedObject->bBabaObjectUpdated = true;
 	}
 	else
 	{
 		if (NextTile->Push(EPushDirection::Down))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->bBabaObjectUpdated = true;
 		}
 	}
 
-	
+
 }

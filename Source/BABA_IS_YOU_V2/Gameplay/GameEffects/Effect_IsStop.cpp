@@ -3,6 +3,7 @@
 
 #include "Effect_IsStop.h"
 #include "../..//Core/BaseBabaObject.h"
+#include "../..//Core/BIY_GameMode.h"
 
 void UEffect_IsStop::AffectStarted()
 {

@@ -6,11 +6,12 @@
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/Gameplaystatics.h"
+#include "BaseBabaObject.h"
+#include "PaperFlipbook.h"
 #include "BIY_GameMode.generated.h"
 
 
-class UBabaRuleEffect;
-class UBabaRule;
+
 
 /*holds two effects that contradict each other*/
 USTRUCT(BlueprintType)
@@ -28,6 +29,145 @@ struct FContradictionList
 
 };
 
+USTRUCT(BlueprintType, Blueprintable)
+struct FBabaObjectState
+{
+	GENERATED_BODY()
+
+
+	FBabaObjectState() {};
+
+	FBabaObjectState(ABaseBabaObject* BabaObject)
+	{
+		bIsValidState = true;
+		UpdateStructWithBaba(BabaObject);
+	}
+
+	FBabaObjectState(const FBabaObjectState& other)
+	{
+		ObjectLocation = other.ObjectLocation;
+		ObjectVisual = other.ObjectVisual;
+		TopTile = other.TopTile;
+		BottomTile = other.BottomTile;
+		RightTile = other.RightTile;
+		LeftTile = other.LeftTile;
+		LastSavedVisualsID = other.LastSavedVisualsID;
+		bIsValidState = other.bIsValidState;
+	}
+
+	void UpdateStructWithBaba(ABaseBabaObject* BabaObject)
+	{
+		if (!BabaObject) return;
+
+		ObjectLocation = BabaObject->GetActorLocation();
+		ObjectVisual = BabaObject->VisualsComponent->GetFlipbook();
+
+		ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
+		if (AsObstacle)
+		{
+			TopTile = AsObstacle->TopTile;
+			BottomTile = AsObstacle->BottomTile;
+			RightTile = AsObstacle->RightTile;
+			LeftTile = AsObstacle->LeftTile;
+			LastSavedVisualsID = AsObstacle->LastSavedVisualsID;
+		}
+	}
+
+	void UpdateBabaWithStruct(ABaseBabaObject* BabaObject)
+	{
+		if (!BabaObject) return;
+
+		BabaObject->SetActorLocation(ObjectLocation);
+		BabaObject->VisualsComponent->SetFlipbook(ObjectVisual);
+		BabaObject->bBabaObjectUpdated = false;
+
+		ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
+		if (AsObstacle)
+		{
+		   AsObstacle->TopTile = TopTile;
+		   AsObstacle->BottomTile = BottomTile;
+		   AsObstacle->RightTile = RightTile;
+		   AsObstacle->LeftTile = LeftTile;
+		   AsObstacle->LastSavedVisualsID = LastSavedVisualsID;
+		}
+	}
+	//this holds the repeated moments so we increament this int instead of storing the whole thing again.
+	int32 StateInstances;
+
+	/*this to differ between the states that are made by actual objects and states that are returned from a function as a default return value 
+	* when condition is not met
+	*/
+	UPROPERTY()
+	bool bIsValidState;
+
+	/*Base Baba Object Entries */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector ObjectLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperFlipbook* ObjectVisual;
+
+	/* Obstacles Entries */
+	
+	UPROPERTY()
+	ABaseBabaObstacle* TopTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* BottomTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* RightTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* LeftTile;
+
+	UPROPERTY()
+	FString LastSavedVisualsID;
+
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FBabaObjectStateWrapper
+{
+	GENERATED_BODY()
+	FBabaObjectStateWrapper() {};
+
+	FBabaObjectStateWrapper(ABaseBabaObject* BabaObject)
+	{
+		RecordBabaObject(BabaObject);
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray< FBabaObjectState> Values;
+
+	void RecordBabaObject(ABaseBabaObject* BabaObject)
+	{
+		int32 index = Values.Add(FBabaObjectState(BabaObject));
+		
+		UE_LOG(LogTemp, Warning, TEXT("BABA UNDO DEBUG : State Wrapper Constrcut state with visuals = %s"), *Values[index].ObjectVisual->GetName());
+	}
+
+	FBabaObjectState GetBabaObjectState()
+	{
+		FBabaObjectState State;
+
+		//removing the last index since it is the state that the object is in before the undo so we dont need to undo to it 
+		/*if (Values.IsValidIndex(Values.Num() - 1))
+			Values.RemoveAt((Values.Num() - 1));*/
+
+		int32 index = Values.Num() - 1;//this will become the second last index
+	
+		if (Values.IsValidIndex(index))
+		{
+			State = Values[index];
+			Values.RemoveAt(index);
+		}
+	       
+		
+	    return State;
+	}
+};
+
 /*holds all the targets that the rule has applid to*/
 USTRUCT(BlueprintType)
 struct FRuleTargets
@@ -37,7 +177,7 @@ struct FRuleTargets
 	FRuleTargets() {}
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Baba Structs")
-	TArray<class ABaseBabaObject*> RuleTargets;
+	TArray<ABaseBabaObject*> RuleTargets;
 
 };
 
@@ -49,9 +189,10 @@ class BABA_IS_YOU_V2_API ABIY_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	ABIY_GameMode() {}
+	ABIY_GameMode();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
@@ -104,7 +245,7 @@ public:
 
 	/*this will holds how many object is a 'YOU' and when this list is cleared the game is over*/
 	UPROPERTY()
-	TArray<class ABaseBabaObject*> IsYouObjects;
+	TArray<ABaseBabaObject*> IsYouObjects;
 	void RegisterYouObject(ABaseBabaObject* newObject);
 	void UnRegisterYouObject(ABaseBabaObject* Object);
 
@@ -116,6 +257,14 @@ public:
 	void UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* target);
 
 
+	//save all the baba objects in the level once so we dont need to query them everytime we want to store the game state
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<ABaseBabaObject*, FBabaObjectStateWrapper> BabaObjectsStatesMap;
+
+	/*called after each change in the game state to store it for undo*/
+	void TryUpdateBabaGameState();
+	void UndoMove();
+	int32 MoveStacIndex;
 
 	//###################################################
 	//################# DEBUGGING #######################
@@ -126,4 +275,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Baba Is You|Debugging")
 	FORCEINLINE TMap<UBabaRule*, FRuleTargets> GetRuleAndTargets() { return Rules_Targets_Map; };
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Is You|Debugging")
+	void DebugPreviusLocation(FVector location, int entries, UPaperFlipbook* Visuals);
+
 };

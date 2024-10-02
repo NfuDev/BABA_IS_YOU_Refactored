@@ -3,6 +3,7 @@
 
 #include "Effect_IsPush.h"
 #include "../..//Core/BaseBabaObject.h"
+#include "../..//Core/BIY_GameMode.h"
 
 void UEffect_IsPush::AffectStarted()
 {

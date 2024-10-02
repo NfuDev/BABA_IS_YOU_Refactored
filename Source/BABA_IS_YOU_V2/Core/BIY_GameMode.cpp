@@ -2,8 +2,13 @@
 
 
 #include "BIY_GameMode.h"
-#include "BaseBabaObject.h"
+#include "BabaPlayerController.h"
 
+ABIY_GameMode::ABIY_GameMode()
+{
+	PlayerControllerClass = ABabaPlayerController::StaticClass();
+	MoveStacIndex = 0;
+}
 
 void ABIY_GameMode::BeginPlay()
 {
@@ -16,8 +21,20 @@ void ABIY_GameMode::BeginPlay()
 		if (AsBabaObject)
 		{
 			AsBabaObject->RegisterNeighbours();
+			BabaObjectsStatesMap.Add(AsBabaObject, FBabaObjectStateWrapper(AsBabaObject));//saves initial states
 		}
 	}
+}
+
+void ABIY_GameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	/*for (TPair<ABaseBabaObject*, FBabaObjectStateWrapper>& KVP : BabaObjectsStatesMap)
+	{
+		FBabaObjectState PreviousState = KVP.Value.GetBabaObjectState();
+		DebugPreviusLocation(PreviousState.ObjectLocation, KVP.Value.Values.Num(), PreviousState.ObjectVisual);
+	}*/
 }
 
 void ABIY_GameMode::RegisterYouObject(ABaseBabaObject* newObject)
@@ -31,7 +48,11 @@ void ABIY_GameMode::UnRegisterYouObject(ABaseBabaObject* Object)
 	if (IsYouObjects.Contains(Object))
 	{
 		IsYouObjects.Remove(Object); 
-	}	
+	}
+	if (IsYouObjects.Num() == 0)
+	{
+		BabaGameFinished(false);
+	}
 }
 
 void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, ABaseBabaObject* target)
@@ -54,5 +75,33 @@ void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* t
 	if (Rules_Targets_Map.Contains(rule))
 	{
 		Rules_Targets_Map[rule].RuleTargets.Remove(target);
+	}
+}
+
+//To do : Optimise.
+void ABIY_GameMode::TryUpdateBabaGameState()
+{
+
+	TArray<ABaseBabaObject*> BabaObjects;
+	BabaObjectsStatesMap.GenerateKeyArray(BabaObjects);
+	for (auto itr : BabaObjects)
+	{
+		BabaObjectsStatesMap[itr].RecordBabaObject(itr);
+	}
+
+	MoveStacIndex++;
+}
+
+//To do : Optimise.
+void ABIY_GameMode::UndoMove()
+{
+	for (TPair<ABaseBabaObject*, FBabaObjectStateWrapper>& KVP : BabaObjectsStatesMap)
+	{
+		FBabaObjectState PreviousState = KVP.Value.GetBabaObjectState();
+
+		if(PreviousState.bIsValidState && PreviousState.ObjectVisual)
+		   PreviousState.UpdateBabaWithStruct(KVP.Key);
+
+		DebugPreviusLocation(PreviousState.ObjectLocation, KVP.Value.Values.Num(), PreviousState.ObjectVisual);
 	}
 }

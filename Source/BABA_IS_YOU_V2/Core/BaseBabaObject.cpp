@@ -2,7 +2,7 @@
 
 
 #include "BaseBabaObject.h"
-
+#include "BIY_GameMode.h"
 
 
 ABaseBabaObject::ABaseBabaObject()
@@ -82,6 +82,7 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 		PreChangeLocation();
 		SetActorLocation(NextGrid);
 		PostChangeLocation(Direction);
+		bBabaObjectUpdated = true;
 		return true;
 	}
 	else
@@ -91,6 +92,7 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 			PreChangeLocation();
 			SetActorLocation(NextGrid);
 			PostChangeLocation(Direction);
+			bBabaObjectUpdated = true;
 			return true;
 		}
 		else
@@ -141,6 +143,7 @@ void ABaseBabaObject::CheckForOverlap()
 
 void ABaseBabaObject::UpdateObjectState(EBabaObjectState NewState)
 {
+	BabaObjectState = NewState;
 	//To Do , logics for death animations and save that so when game rewind we can restore killed object
 }
 

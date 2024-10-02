@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "PaperFlipbookComponent.h"
 #include "../Gameplay/BabaRulesBase.h"
-#include "BIY_GameMode.h"
 #include "BaseBabaObject.Generated.h"
 
 
@@ -39,7 +38,7 @@ enum class EPushDirection : uint8
 UENUM(BlueprintType)
 enum class EBabaObjectState : uint8
 {
-	Live,
+	ALive,
 	Dead
 };
 
@@ -102,6 +101,9 @@ public:
 	
 	FBabaEvent OnBabaObjectOverlap;
 
+	//to distinguish the objects that has changed and those hasn't
+	bool bBabaObjectUpdated;
+
 private:
 	
 	bool CanBePushed();
@@ -158,6 +160,9 @@ public:
 	TMap<EObstacleSegment, UPaperFlipbook*> VisualsCases;
 
 	const TMap<FString, EObstacleSegment> stringToEnumMap;
+
+	UPROPERTY()
+	FString LastSavedVisualsID;
 
 	UPROPERTY()
 	ABaseBabaObstacle* TopTile;
