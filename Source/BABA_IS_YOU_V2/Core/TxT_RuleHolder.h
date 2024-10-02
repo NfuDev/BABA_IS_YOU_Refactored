@@ -14,6 +14,8 @@ class BABA_IS_YOU_V2_API ATxT_RuleHolder : public ABabaTextObjectBase
 {
 	GENERATED_BODY()
 	
+public:
+
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	UBabaRule* Rule;
 };

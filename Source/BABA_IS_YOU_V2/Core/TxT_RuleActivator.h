@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BabaTextObjectBase.h"
+#include "TxT_RuleTarget.h"
+#include "TxT_RuleHolder.h"
 #include "TxT_RuleActivator.generated.h"
 
 /**
@@ -15,4 +17,29 @@ class BABA_IS_YOU_V2_API ATxT_RuleActivator : public ABabaTextObjectBase
 {
 	GENERATED_BODY()
 	ATxT_RuleActivator() {};
+
+	/*Base Baba Text Object Interface*/
+	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
+	/*Base Baba Text Object Interface*/
+
+	UPROPERTY()
+	ATxT_RuleTarget* UpperTarget;
+
+	UPROPERTY()
+	ATxT_RuleTarget* LeftTarget;
+
+
+
+	UPROPERTY()
+	ATxT_RuleHolder* BottomRule;
+
+	UPROPERTY()
+	ATxT_RuleHolder* RightRule;
+
+
+	UPROPERTY()
+	UBabaRule* LastAppliedRuleToUpper;
+
+	UPROPERTY()
+	UBabaRule* LastAppliedRuleToLeft;
 };

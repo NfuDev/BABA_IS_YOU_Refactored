@@ -14,15 +14,15 @@ class BABA_IS_YOU_V2_API ATxT_RuleTarget : public ABabaTextObjectBase
 {
 	GENERATED_BODY()
 	
+public:
+
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	TSubclassOf<ABaseBabaObject> Target;
 
-	
-public:
-	
 	//account for when using 'And' Operator
 	UPROPERTY()
 	TArray<TSubclassOf<ABaseBabaObject>> AdditionalTargets;
 
 	void ApplyRuleOnTarget(UBabaRule* Rule);
+	void RemoveRuleFromTarget(UBabaRule* Rule);
 };
