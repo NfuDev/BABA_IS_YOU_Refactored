@@ -103,6 +103,34 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 }
 
 
+void ABaseBabaObject::RecordBabaObjectState()
+{
+	ObjectStates.Add(FBabaObjectState(this));
+	bBabaObjectUpdated = true;
+}
+
+void ABaseBabaObject::OnBabaUndo()
+{
+	int32 index = ObjectStates.Num() - 1;
+
+	if (bBabaObjectUpdated && ObjectStates.Num() > 0)
+	{
+		index = ObjectStates.Num() - 1;
+		ObjectStates.RemoveAt(index);
+		bBabaObjectUpdated = false;
+	}
+
+
+	if (ObjectStates.IsValidIndex(index))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UNDO INDEX %d"), index);
+		ObjectStates[index].UpdateBabaWithStruct(this);
+
+		if(index > 0)
+		  ObjectStates.RemoveAt(index);
+	}
+}
+
 bool ABaseBabaObject::CanBePushed()
 {
 	bool bCanBePushed = true;
@@ -409,4 +437,45 @@ ABaseBabaObstacle* ABaseBabaObstacle::GetTileInDirection(EPushDirection Directio
 	}
 
 	return nullptr;
+}
+
+
+//######################################################################
+//########### UNDO MOVE STUFF ##########################################
+
+void FBabaObjectState::UpdateStructWithBaba(ABaseBabaObject* BabaObject)
+{
+	if (!BabaObject) return;
+
+	ObjectLocation = BabaObject->GetActorLocation();
+	ObjectVisual = BabaObject->VisualsComponent->GetFlipbook();
+
+	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
+	if (AsObstacle)
+	{
+		TopTile = AsObstacle->TopTile;
+		BottomTile = AsObstacle->BottomTile;
+		RightTile = AsObstacle->RightTile;
+		LeftTile = AsObstacle->LeftTile;
+		LastSavedVisualsID = AsObstacle->LastSavedVisualsID;
+	}
+}
+
+void FBabaObjectState::UpdateBabaWithStruct(ABaseBabaObject* BabaObject)
+{
+	if (!BabaObject) return;
+
+	BabaObject->SetActorLocation(ObjectLocation);
+	BabaObject->VisualsComponent->SetFlipbook(ObjectVisual);
+	BabaObject->bBabaObjectUpdated = false;
+
+	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
+	if (AsObstacle)
+	{
+		AsObstacle->TopTile = TopTile;
+		AsObstacle->BottomTile = BottomTile;
+		AsObstacle->RightTile = RightTile;
+		AsObstacle->LeftTile = LeftTile;
+		AsObstacle->LastSavedVisualsID = LastSavedVisualsID;
+	}
 }

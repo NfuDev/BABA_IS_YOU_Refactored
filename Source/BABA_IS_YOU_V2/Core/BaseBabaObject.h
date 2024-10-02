@@ -7,6 +7,7 @@
 #include "../Gameplay/BabaRulesBase.h"
 #include "BaseBabaObject.Generated.h"
 
+#define Move(Args) std::move(Args)
 
 #if WITH_EDITOR
 
@@ -41,6 +42,75 @@ enum class EBabaObjectState : uint8
 	ALive,
 	Dead
 };
+
+// UNDO MECHANICS STUFF
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FBabaObjectState
+{
+	GENERATED_BODY()
+
+
+	FBabaObjectState() {};
+
+	FBabaObjectState(ABaseBabaObject* BabaObject)
+	{
+		bIsValidState = true;
+		UpdateStructWithBaba(BabaObject);
+	}
+
+	FBabaObjectState(const FBabaObjectState& other)
+	{
+		ObjectLocation = other.ObjectLocation;
+		ObjectVisual = other.ObjectVisual;
+		TopTile = other.TopTile;
+		BottomTile = other.BottomTile;
+		RightTile = other.RightTile;
+		LeftTile = other.LeftTile;
+		LastSavedVisualsID = other.LastSavedVisualsID;
+		bIsValidState = other.bIsValidState;
+		StateInstances = other.StateInstances;
+	}
+
+
+	void UpdateStructWithBaba(ABaseBabaObject* BabaObject);
+	void UpdateBabaWithStruct(ABaseBabaObject* BabaObject);
+	
+	//this holds the repeated moments so we increament this int instead of storing the whole thing again.
+	int32 StateInstances;
+
+	/*this to differ between the states that are made by actual objects and states that are returned from a function as a default return value
+	* when condition is not met
+	*/
+	UPROPERTY()
+	bool bIsValidState;
+
+	/*Base Baba Object Entries */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector ObjectLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPaperFlipbook* ObjectVisual;
+
+	/* Obstacles Entries */
+
+	UPROPERTY()
+	ABaseBabaObstacle* TopTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* BottomTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* RightTile;
+
+	UPROPERTY()
+	ABaseBabaObstacle* LeftTile;
+
+	UPROPERTY()
+	FString LastSavedVisualsID;
+
+};
+
 
 /**
  * Base Baba Object , can be baba, Wall, Rule , etc
@@ -103,6 +173,13 @@ public:
 
 	//to distinguish the objects that has changed and those hasn't
 	bool bBabaObjectUpdated;
+
+	/*for undo*/
+	UPROPERTY()
+	TArray<FBabaObjectState> ObjectStates;
+
+	void RecordBabaObjectState();
+	void OnBabaUndo();
 
 private:
 	

@@ -21,21 +21,13 @@ void ABIY_GameMode::BeginPlay()
 		if (AsBabaObject)
 		{
 			AsBabaObject->RegisterNeighbours();
-			BabaObjectsStatesMap.Add(AsBabaObject, FBabaObjectStateWrapper(AsBabaObject));//saves initial states
+			BabaObjectsInLevel.Add(AsBabaObject);
 		}
 	}
+
+	TryUpdateBabaGameState();//stores the initial states
 }
 
-void ABIY_GameMode::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	/*for (TPair<ABaseBabaObject*, FBabaObjectStateWrapper>& KVP : BabaObjectsStatesMap)
-	{
-		FBabaObjectState PreviousState = KVP.Value.GetBabaObjectState();
-		DebugPreviusLocation(PreviousState.ObjectLocation, KVP.Value.Values.Num(), PreviousState.ObjectVisual);
-	}*/
-}
 
 void ABIY_GameMode::RegisterYouObject(ABaseBabaObject* newObject)
 {
@@ -78,30 +70,18 @@ void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* t
 	}
 }
 
-//To do : Optimise.
 void ABIY_GameMode::TryUpdateBabaGameState()
 {
-
-	TArray<ABaseBabaObject*> BabaObjects;
-	BabaObjectsStatesMap.GenerateKeyArray(BabaObjects);
-	for (auto itr : BabaObjects)
+	for (auto& itr : BabaObjectsInLevel)
 	{
-		BabaObjectsStatesMap[itr].RecordBabaObject(itr);
-	}
-
-	MoveStacIndex++;
+		itr->RecordBabaObjectState();
+    }
 }
 
-//To do : Optimise.
 void ABIY_GameMode::UndoMove()
 {
-	for (TPair<ABaseBabaObject*, FBabaObjectStateWrapper>& KVP : BabaObjectsStatesMap)
+	for (auto& itr : BabaObjectsInLevel)
 	{
-		FBabaObjectState PreviousState = KVP.Value.GetBabaObjectState();
-
-		if(PreviousState.bIsValidState && PreviousState.ObjectVisual)
-		   PreviousState.UpdateBabaWithStruct(KVP.Key);
-
-		DebugPreviusLocation(PreviousState.ObjectLocation, KVP.Value.Values.Num(), PreviousState.ObjectVisual);
+		itr->OnBabaUndo();
 	}
 }
