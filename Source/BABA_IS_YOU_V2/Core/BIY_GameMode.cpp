@@ -36,11 +36,31 @@ void ABIY_GameMode::RegisterYouObject(ABaseBabaObject* newObject)
 //probably will need to update to use classes 
 void ABIY_GameMode::UnRegisterYouObject(ABaseBabaObject* Object)
 {
+	//this for death by messing with the rules.
 	if (IsYouObjects.Contains(Object))
 	{
 		IsYouObjects.Remove(Object); 
 	}
 	if (IsYouObjects.Num() == 0)
+	{
+		BabaGameFinished(false);
+	}
+}
+
+void ABIY_GameMode::OnYouObjectDied(ABaseBabaObject* Object)
+{
+	//for death by overlap with certain types 
+	int32 DeadCount = 0;
+	
+	for (auto& itr : IsYouObjects)
+	{
+		if (itr->BabaObjectState == EBabaObjectState::Dead)
+		{
+			DeadCount++;
+		}
+	}
+
+	if (DeadCount == IsYouObjects.Num())
 	{
 		BabaGameFinished(false);
 	}

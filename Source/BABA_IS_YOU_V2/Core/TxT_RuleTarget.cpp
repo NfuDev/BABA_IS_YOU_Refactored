@@ -3,6 +3,28 @@
 
 #include "TxT_RuleTarget.h"
 #include "Kismet/Gameplaystatics.h"
+#include "TxT_RuleActivator.h"
+
+//targets cares only about the right and bottom grids
+void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
+{
+	if (LastAlingedActivatorRight)
+		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
+
+	if (LastAlingedActivatorBottom)
+		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
+
+	FVector DummyVector = FVector();
+	LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
+	LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
+    
+
+	if (LastAlingedActivatorRight)
+		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
+
+	if (LastAlingedActivatorBottom)
+		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
+}
 
 void ATxT_RuleTarget::ApplyRuleOnTarget(UBabaRule* Rule)
 {

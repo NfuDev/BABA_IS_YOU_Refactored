@@ -18,10 +18,12 @@ class BABA_IS_YOU_V2_API ATxT_RuleActivator : public ABabaTextObjectBase
 	GENERATED_BODY()
 	ATxT_RuleActivator() {};
 
+public:
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
 	/*Base Baba Text Object Interface*/
 
+private:
 	UPROPERTY()
 	ATxT_RuleTarget* UpperTarget;
 

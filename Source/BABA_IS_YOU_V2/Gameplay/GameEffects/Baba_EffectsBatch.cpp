@@ -47,6 +47,7 @@ void UEffect_IsKill::AffectStarted()
 	AffectedObject->OnBabaObjectOverlap.AddUObject(this, &UEffect_IsKill::OnOverlap);
 }
 
+//kill should kill not remove the effect from the target.
 void UEffect_IsKill::OnOverlap(AActor* OverlappedObject)
 {
 	ABaseBabaObject* AsBabaObject = Cast<ABaseBabaObject>(OverlappedObject);
@@ -64,8 +65,8 @@ void UEffect_IsKill::OnOverlap(AActor* OverlappedObject)
 
 			if (GM)
 			{
-				GM->UnRegisterYouObject(AsBabaObject);
 				AsBabaObject->UpdateObjectState(EBabaObjectState::Dead);
+				GM->OnYouObjectDied(AsBabaObject);
 			}
 
 		}

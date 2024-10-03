@@ -102,10 +102,12 @@ public:
 	void BabaGameFinished(bool bWin);
 
 	/*this will holds how many object is a 'YOU' and when this list is cleared the game is over*/
+	/*take into account if the 'YOU' is dead or alive because even if in the list but dead it should end the game*/
 	UPROPERTY()
 	TArray<ABaseBabaObject*> IsYouObjects;
 	void RegisterYouObject(ABaseBabaObject* newObject);
 	void UnRegisterYouObject(ABaseBabaObject* Object);
+	void OnYouObjectDied(ABaseBabaObject* Object);
 
 
 	/*saves what rule affects which objects*/

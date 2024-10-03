@@ -15,7 +15,20 @@ class BABA_IS_YOU_V2_API ATxT_RuleHolder : public ABabaTextObjectBase
 	GENERATED_BODY()
 	
 public:
+	/*Base Baba Text Object Interface*/
+	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
+	/*Base Baba Text Object Interface*/
+
 
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	UBabaRule* Rule;
+
+private:
+
+	UPROPERTY()
+	class ATxT_RuleActivator* LastAlingedActivatorUpper;
+
+	UPROPERTY()
+	class ATxT_RuleActivator* LastAlingedActivatorLeft;
+
 };

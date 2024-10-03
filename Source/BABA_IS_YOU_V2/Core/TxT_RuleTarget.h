@@ -7,7 +7,7 @@
 #include "TxT_RuleTarget.generated.h"
 
 /**
- * this class holds a type of object to be affected by the rule that the acticator has.
+ * this class holds a type of object to be affected by the rule that the acticator has, since the rules are written from left to right and up to down.
  */
 UCLASS(HideDropDown)
 class BABA_IS_YOU_V2_API ATxT_RuleTarget : public ABabaTextObjectBase
@@ -19,10 +19,23 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	TSubclassOf<ABaseBabaObject> Target;
 
+	/*Base Baba Text Object Interface*/
+	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
+	/*Base Baba Text Object Interface*/
+
 	//account for when using 'And' Operator
 	UPROPERTY()
 	TArray<TSubclassOf<ABaseBabaObject>> AdditionalTargets;
 
 	void ApplyRuleOnTarget(UBabaRule* Rule);
 	void RemoveRuleFromTarget(UBabaRule* Rule);
+
+
+private:
+
+	UPROPERTY()
+	class ATxT_RuleActivator* LastAlingedActivatorRight;
+
+	UPROPERTY()
+	class ATxT_RuleActivator* LastAlingedActivatorBottom;
 };
