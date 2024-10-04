@@ -24,6 +24,10 @@ public:
 	UBabaRule* Rule;
 
 	//proper place to check for contradiction is here not in the baba object level we want this to be only relevant to rules system not the baba level.
+	//also contradiction is part of the rule data asset for convenience, since this is just a holder it should not have anything to do with what will contradict the rule. 
+
+	[[nodiscard]] bool CheckForContradiction(ABaseBabaObject* IncomingTarget);
+
 private:
 
 	UPROPERTY()

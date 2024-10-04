@@ -25,7 +25,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		{
 			//apply the rule on the target
 			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to apply rule %s On %s"), *BottomRule->Rule->GetName(), *UpperTarget->Target->GetName());
-			UpperTarget->ApplyRuleOnTarget(BottomRule->Rule);
+			UpperTarget->ApplyRuleOnTarget(BottomRule);
 			LastAppliedRuleToUpper = BottomRule->Rule;
 		}
 		else
@@ -41,7 +41,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		{
 			//apply the rule on the target
 			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to apply rule %s On %s"), *RightRule->Rule->GetName(), *LeftTarget->Target->GetName());
-			LeftTarget->ApplyRuleOnTarget(RightRule->Rule);
+			LeftTarget->ApplyRuleOnTarget(RightRule);
 			LastAppliedRuleToLeft = RightRule->Rule;
 		}
 		else

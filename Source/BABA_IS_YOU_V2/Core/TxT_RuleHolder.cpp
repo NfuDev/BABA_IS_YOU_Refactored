@@ -23,3 +23,20 @@ void ATxT_RuleHolder::TxTDoYourThing(EPushDirection ChangeDirection)
 	if (LastAlingedActivatorLeft)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
+
+bool ATxT_RuleHolder::CheckForContradiction(ABaseBabaObject* IncomingTarget)
+{
+	if (!IncomingTarget || !Rule) return false;
+	if (Rule->ContradictedRules.Num() == 0) return false;
+
+	bool bContradict = false;
+
+	for (auto& itr : IncomingTarget->AppliedRules)
+	{
+		bContradict = Rule->ContradictedRules.Contains(itr);
+		if (bContradict)
+			break;
+	}
+
+	return bContradict;
+}

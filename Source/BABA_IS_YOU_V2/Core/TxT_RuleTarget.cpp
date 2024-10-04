@@ -26,17 +26,33 @@ void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 }
 
-void ATxT_RuleTarget::ApplyRuleOnTarget(UBabaRule* Rule)
+void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 {
 	TArray<AActor*> FoundObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Target, FoundObjects);
+
+	if (FoundObjects.Num() > 0)
+	{
+		//we take the first object and test for contradiction
+		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(FoundObjects[0]);
+
+		bool bRuleContradict = false;
+		if(AsBabaObejct)
+			bRuleContradict = RuleHolder->CheckForContradiction(AsBabaObejct);
+
+		if (bRuleContradict)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Rule Target : Rule Contradict"));
+			return;
+		}
+	}
 
 	for (auto& itr : FoundObjects)
 	{
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(itr);
 		if (AsBabaObejct)
 		{
-			AsBabaObejct->ApplyRuleOnObject(Rule);
+			AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule);
 		}
 	}
 }

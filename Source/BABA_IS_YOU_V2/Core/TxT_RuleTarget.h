@@ -27,7 +27,7 @@ public:
 	UPROPERTY()
 	TArray<TSubclassOf<ABaseBabaObject>> AdditionalTargets;
 
-	void ApplyRuleOnTarget(UBabaRule* Rule);
+	void ApplyRuleOnTarget(class ATxT_RuleHolder* RuleHolder);
 	void RemoveRuleFromTarget(UBabaRule* Rule);
 
 
