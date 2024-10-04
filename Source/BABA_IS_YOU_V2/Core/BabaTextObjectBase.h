@@ -19,6 +19,7 @@ class BABA_IS_YOU_V2_API ABabaTextObjectBase : public ABaseBabaObject
 
 	/*Base Baba Object Interface*/
 	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection); };
+	virtual void PostUndo() override;
 	/*Base Baba Object Interface*/
 
 	/*Base Baba Text Object Interface*/

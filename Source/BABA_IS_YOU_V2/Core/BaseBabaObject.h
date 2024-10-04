@@ -149,12 +149,13 @@ public:
 
 	bool Push(EPushDirection Direction);
 
-	bool Effectcontradict(UBabaRuleEffect* Effect);
+	bool Effectcontradict(UBabaRuleEffect* Effect);//from a desing prespective i think i should move this one layer up in the chain , so the txt objects take care of this
 
 	/*Movement Inteface*/
 	virtual void PreChangeLocation(){}
 	virtual void PostChangeLocation(EPushDirection ChangeDirection) { CheckForOverlap(); }
 	virtual void RegisterNeighbours() {};
+	virtual void PostUndo() {};
 	/*Movement Inteface*/
 
 

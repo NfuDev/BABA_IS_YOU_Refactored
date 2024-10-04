@@ -139,7 +139,7 @@ bool ABaseBabaObject::CanBePushed()
 
 bool ABaseBabaObject::Effectcontradict(UBabaRuleEffect* Effect)
 {
-	return false;// To DO
+	return false;// To DO, moved to TxT_RuleHolder.
 }
 
 void ABaseBabaObject::CheckForOverlap()

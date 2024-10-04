@@ -13,3 +13,8 @@ void ABabaTextObjectBase::BeginPlay()
 	temp->RegisterTarget(this);
 	AppliedEffects.Add(temp);
 }
+
+void ABabaTextObjectBase::PostUndo()
+{
+	TxTDoYourThing(EPushDirection());
+}

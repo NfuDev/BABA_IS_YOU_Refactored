@@ -23,6 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	UBabaRule* Rule;
 
+	//proper place to check for contradiction is here not in the baba object level we want this to be only relevant to rules system not the baba level.
 private:
 
 	UPROPERTY()
