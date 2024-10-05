@@ -15,6 +15,15 @@ void UEffect_IsStop::AffectStarted()
 	AffectedObject->SetTraceChannelResponce(Channle, ECR_Block);
 }
 
+void UEffect_IsStop::EffectCleanup()
+{
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (!GM) return;
+	ECollisionChannel Channle = UEngineTypes::ConvertToCollisionChannel(GM->PushChannel);
+	AffectedObject->SetTraceChannelResponce(Channle, ECR_Ignore);
+}
+
 //void UEffect_IsStop::UnRegisterTarget(ABaseBabaObject* targetObject)
 //{
 //

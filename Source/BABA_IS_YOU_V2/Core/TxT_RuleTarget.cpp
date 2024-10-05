@@ -42,6 +42,7 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 
 		if (bRuleContradict)
 		{
+			ContradictionVisuals->SetVisibility(true);
 			UE_LOG(LogTemp, Warning, TEXT("Rule Target : Rule Contradict"));
 			return;
 		}
@@ -57,8 +58,13 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 	}
 }
 
-void ATxT_RuleTarget::RemoveRuleFromTarget(UBabaRule* Rule)
+void ATxT_RuleTarget::RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder)
 {
+	if (!RuleHolder->Rule) return;
+
+	ContradictionVisuals->SetVisibility(false);
+	RuleHolder->ContradictionVisuals->SetVisibility(false);
+
 	TArray<AActor*> FoundObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Target, FoundObjects);
 
@@ -67,7 +73,7 @@ void ATxT_RuleTarget::RemoveRuleFromTarget(UBabaRule* Rule)
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(itr);
 		if (AsBabaObejct)
 		{
-			AsBabaObejct->RemoveRuleEffectFromObject(Rule);
+			AsBabaObejct->RemoveRuleEffectFromObject(RuleHolder->Rule);
 		}
 	}
 }

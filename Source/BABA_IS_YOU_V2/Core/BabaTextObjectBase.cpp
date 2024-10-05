@@ -14,7 +14,17 @@ void ABabaTextObjectBase::BeginPlay()
 	AppliedEffects.Add(temp);
 }
 
+ABabaTextObjectBase::ABabaTextObjectBase()
+{
+	ContradictionVisuals = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("ContradictionVisuals"));
+	ContradictionVisuals->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
+	ContradictionVisuals->SetRelativeLocation(FVector(0.0f, 0.0f, 5.0f));
+	ContradictionVisuals->SetupAttachment(RootComponent);
+	ContradictionVisuals->SetVisibility(false);
+}
+
 void ABabaTextObjectBase::PostUndo()
 {
+	ContradictionVisuals->SetVisibility(false);
 	TxTDoYourThing(EPushDirection());
 }

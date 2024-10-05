@@ -16,4 +16,5 @@ class BABA_IS_YOU_V2_API UEffect_IsPush : public UBabaRuleEffect
 	
 
 	virtual void AffectStarted() override;
+	virtual void EffectCleanup() override;
 };

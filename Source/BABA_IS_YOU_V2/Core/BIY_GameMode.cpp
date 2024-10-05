@@ -116,5 +116,6 @@ void ABIY_GameMode::InitObjectsStates()
 	for (auto& itr : BabaObjectsInLevel)
 	{
 		itr->CachedObjectState.UpdateStructWithBaba(itr);
+		itr->PostUndo();//yes this is not undo but this forces the activators to try to activate the rules when the game starts.
 	}
 }

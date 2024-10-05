@@ -16,9 +16,15 @@ class BABA_IS_YOU_V2_API ABabaTextObjectBase : public ABaseBabaObject
 	GENERATED_BODY()
 	
 	virtual void BeginPlay() override;
+public:
+
+	ABabaTextObjectBase();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BabaIsYou")
+	TObjectPtr<UPaperFlipbookComponent> ContradictionVisuals;
 
 	/*Base Baba Object Interface*/
-	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection); };
+	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection);};
 	virtual void PostUndo() override;
 	/*Base Baba Object Interface*/
 

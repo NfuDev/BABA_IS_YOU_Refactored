@@ -38,5 +38,9 @@ bool ATxT_RuleHolder::CheckForContradiction(ABaseBabaObject* IncomingTarget)
 			break;
 	}
 
+	//add visuals and game cues here for the contradiction
+	if (bContradict)
+		ContradictionVisuals->SetVisibility(true);
+
 	return bContradict;
 }

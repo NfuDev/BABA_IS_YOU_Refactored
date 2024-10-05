@@ -20,7 +20,7 @@ public:
 	UEffect_IsYou() {};
 
 	virtual void AffectStarted() override;
-
+	
 	void MoveRight();
 	void MoveLeft();
 	void MoveUP();

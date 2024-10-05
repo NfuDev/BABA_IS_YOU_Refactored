@@ -14,3 +14,12 @@ void UEffect_IsPush::AffectStarted()
 	ECollisionChannel Channle = UEngineTypes::ConvertToCollisionChannel(GM->PushChannel);
 	AffectedObject->SetTraceChannelResponce(Channle, ECR_Block);
 }
+
+void UEffect_IsPush::EffectCleanup()
+{
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (!GM) return;
+	ECollisionChannel Channle = UEngineTypes::ConvertToCollisionChannel(GM->PushChannel);
+	AffectedObject->SetTraceChannelResponce(Channle, ECR_Ignore);
+}

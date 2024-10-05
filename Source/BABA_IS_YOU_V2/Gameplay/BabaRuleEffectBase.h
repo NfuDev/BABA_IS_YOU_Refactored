@@ -24,6 +24,7 @@ public:
 	void ApplyEffect(ABaseBabaObject* targetObject);//probably should be called inside the affect started and pass the baba object so it can be made in blueprint also but this for later
 
 	virtual void AffectStarted() {};
+	virtual void EffectCleanup() {};
 
 	UPROPERTY()
 	ABaseBabaObject* AffectedObject;

@@ -28,7 +28,7 @@ public:
 	TArray<TSubclassOf<ABaseBabaObject>> AdditionalTargets;
 
 	void ApplyRuleOnTarget(class ATxT_RuleHolder* RuleHolder);
-	void RemoveRuleFromTarget(UBabaRule* Rule);
+	void RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder);
 
 
 private:

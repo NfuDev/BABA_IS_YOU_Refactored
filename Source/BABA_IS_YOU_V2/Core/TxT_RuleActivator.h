@@ -40,8 +40,8 @@ private:
 
 
 	UPROPERTY()
-	UBabaRule* LastAppliedRuleToUpper;
+	ATxT_RuleHolder* LastAppliedRuleToUpper;
 
 	UPROPERTY()
-	UBabaRule* LastAppliedRuleToLeft;
+	ATxT_RuleHolder* LastAppliedRuleToLeft;
 };
