@@ -30,6 +30,13 @@ public:
 	void ApplyRuleOnTarget(class ATxT_RuleHolder* RuleHolder);
 	void RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder);
 
+	/*type swtich , when a target is placed instead of a rule , like instead of WALL IS STOP (TARGET _ ACTIVATOR _ RULE) we placed WALL IS BABA (TARGET _ ACTIVATOR _ TARGET)
+	* so in this case we turn the wall into baba object and so on, and we need to store the previus type so we can undo this move since it is distructive 
+	*/
+	void PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> NewType);
+
+	UPROPERTY()
+	TSubclassOf<ABaseBabaObject> PreviousType;
 
 private:
 

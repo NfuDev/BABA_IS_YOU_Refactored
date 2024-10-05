@@ -77,3 +77,8 @@ void ATxT_RuleTarget::RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder)
 		}
 	}
 }
+
+void ATxT_RuleTarget::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> NewType)
+{
+	//To DO : Type Swith here. the spawned object need to register neighbours and also grab all the effects from exsisting objects of same type.
+}
