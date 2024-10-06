@@ -56,18 +56,29 @@ void ABIY_GameMode::UnRegisterYouObject(ABaseBabaObject* Object)
 
 void ABIY_GameMode::OnYouObjectDied(ABaseBabaObject* Object)
 {
+	if (!Object) return;
+	if (!IsYouObjects.Contains(Object)) return;
+
 	//for death by overlap with certain types 
 	int32 DeadCount = 0;
 	
 	for (auto& itr : IsYouObjects)
 	{
-		if (Object->BabaObjectState == EBabaObjectState::Dead)
+		if (itr->BabaObjectState == EBabaObjectState::Dead)
 		{
 			DeadCount++;
 		}
 	}
 
 	if (DeadCount == IsYouObjects.Num())
+	{
+		BabaGameFinished(false);
+	}
+}
+
+inline void ABIY_GameMode::CheckGameFinished()
+{
+	if (IsYouObjects.Num() == 0)
 	{
 		BabaGameFinished(false);
 	}

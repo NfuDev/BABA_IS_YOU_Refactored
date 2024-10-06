@@ -26,16 +26,12 @@ void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 
 
 	FVector DummyVector = FVector();
-	if(bIsVerticalMovement)
 	 LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
 
-	if(bIsHorizentalMovement)
 	 LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
 
-	if (bIsHorizentalMovement)
 	 LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
 
-	if (bIsVerticalMovement)
 	 LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
 

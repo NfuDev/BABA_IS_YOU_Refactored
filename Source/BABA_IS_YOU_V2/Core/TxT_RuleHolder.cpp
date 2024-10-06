@@ -16,10 +16,8 @@ void ATxT_RuleHolder::TxTDoYourThing(EPushDirection ChangeDirection)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 
 	FVector DummyVector = FVector();
-	if(bIsVerticalMovement)
 	  LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
-	if(bIsHorizentalMovement)
 	  LastAlingedActivatorUpper = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
 
 	//try trigger new activator if found

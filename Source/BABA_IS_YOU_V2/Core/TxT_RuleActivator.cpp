@@ -70,14 +70,17 @@ void ATxT_RuleActivator::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> Th
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Transformation Complete!"));
 
-	//TSubclassOf<ABaseBabaObject>& SwapContext = bBetweenUpDownGrids? UpDown_SwitchedToType : LeftRight_SwitchedToType;
-	//SwapContext = ToThis;
+	TSubclassOf<ABaseBabaObject>& SwapContext = bBetweenUpDownGrids? UpDown_SwitchedToType : LeftRight_SwitchedToType;
+	SwapContext = ToThis;
 
-	//Internal_PreformObjectTypeSwitch(This, ToThis);
+	Internal_PreformObjectTypeSwitch(This, ToThis);
 }
 
 void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis)
 {
+
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	//this template is used to feed the swapped object with the applied rule on it's type at the moment of spawning so it flows with the game current rules set.
 	ABaseBabaObject* NewTypeTemplate = Cast<ABaseBabaObject>(UGameplayStatics::GetActorOfClass(GetWorld(), ToThis));
 
@@ -88,31 +91,25 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	TArray< ABaseBabaObject*> NewObjects;
-
-	for (auto& itr : FoundObjects)
+	
+	if(GM)
 	{
-		ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
-		NewObjects.Add(SwappedObject);
+		FRuleTargets& AppliedRuleOnThisType = GM->Map_RulesOnObjectType[ToThis];
 
-		if (NewTypeTemplate)
+		for (auto& itr : FoundObjects)
 		{
-			for (UBabaRule* rule : NewTypeTemplate->AppliedRules)
+			ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
+			NewObjects.Add(SwappedObject);
+
+			for (UBabaRule* rule : AppliedRuleOnThisType.AppliedRulesOnType)
 			{
 				SwappedObject->ApplyRuleOnObject(rule);
 			}
-		}
-		else
-		{
-			// find active rules in the world then apply them here.
+
+			itr->Destroy();
 		}
 
-		itr->Destroy();
-	}
 
-	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM)
-	{
 		for (auto& itr : NewObjects)
 		{
 			itr->RegisterNeighbours();
