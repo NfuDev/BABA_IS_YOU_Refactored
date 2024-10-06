@@ -108,7 +108,7 @@ public:
 	void RegisterYouObject(ABaseBabaObject* newObject);
 	void UnRegisterYouObject(ABaseBabaObject* Object);
 	void OnYouObjectDied(ABaseBabaObject* Object);
-
+	inline void CheckGameFinished() { OnYouObjectDied(nullptr); }//since we don't event use the object in this new code , i used new function with better name to call for when the game does some changes and want to check if the game has finished.
 
 	/*saves what rule affects which objects*/
 	UPROPERTY()
@@ -121,10 +121,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ABaseBabaObject*> BabaObjectsInLevel;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ABaseBabaObject*> RuleActivatorsList;
+
 	/*called after each change in the game state to store it for undo*/
 	void TryUpdateBabaGameState();
 	void UndoMove();
 	void InitObjectsStates();
+	void EvaluateAllRules();
 
 	//###################################################
 	//################# DEBUGGING #######################

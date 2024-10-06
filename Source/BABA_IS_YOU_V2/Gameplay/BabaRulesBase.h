@@ -31,4 +31,5 @@ public:
 	*/
 
 	UBabaRuleEffect* GetRuleEffect(UObject* Outter);
+	bool IsYouRule();
 };

@@ -44,4 +44,20 @@ private:
 
 	UPROPERTY()
 	ATxT_RuleHolder* LastAppliedRuleToLeft;
+
+
+	/*type swtich , when a target is placed instead of a rule , like instead of WALL IS STOP (TARGET _ ACTIVATOR _ RULE) we placed WALL IS BABA (TARGET _ ACTIVATOR _ TARGET)
+    * so in this case we turn the wall into baba object and so on, and we need to store the previus type so we can undo this move since it is distructive
+    */
+	void PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids);
+	void Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis);
+
+	void PostTypeRestored();
+
+	UPROPERTY()
+	TSubclassOf<ABaseBabaObject> LeftRight_SwitchedToType;
+
+	UPROPERTY()
+	TSubclassOf<ABaseBabaObject> UpDown_SwitchedToType;
+
 };

@@ -14,16 +14,32 @@ void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 	if (LastAlingedActivatorBottom)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 
+	if (LastAlingedActivatorUp)
+		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
+
+	if (LastAlingedActivatorLeft)
+		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
+
+
 	FVector DummyVector = FVector();
 	LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
 	LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
-    
+	LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+	LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+
 
 	if (LastAlingedActivatorRight)
 		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
 
 	if (LastAlingedActivatorBottom)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
+
+
+	if (LastAlingedActivatorUp)
+		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
+
+	if (LastAlingedActivatorLeft)
+		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 
 void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
@@ -76,9 +92,4 @@ void ATxT_RuleTarget::RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder)
 			AsBabaObejct->RemoveRuleEffectFromObject(RuleHolder->Rule);
 		}
 	}
-}
-
-void ATxT_RuleTarget::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> NewType)
-{
-	//To DO : Type Swith here. the spawned object need to register neighbours and also grab all the effects from exsisting objects of same type.
 }

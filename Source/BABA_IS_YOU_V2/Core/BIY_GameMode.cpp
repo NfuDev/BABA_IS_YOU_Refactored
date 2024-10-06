@@ -3,6 +3,7 @@
 
 #include "BIY_GameMode.h"
 #include "BabaPlayerController.h"
+#include "TxT_RuleActivator.h"
 
 ABIY_GameMode::ABIY_GameMode()
 {
@@ -21,6 +22,12 @@ void ABIY_GameMode::BeginPlay()
 		{
 			AsBabaObject->RegisterNeighbours();
 			BabaObjectsInLevel.Add(AsBabaObject);
+
+			ATxT_RuleActivator* AsActivator = Cast<ATxT_RuleActivator>(AsBabaObject);
+			if (AsActivator)
+			{
+				RuleActivatorsList.Add(AsActivator);
+			}
 		}
 	}
 
@@ -79,6 +86,10 @@ void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, ABaseBabaObject* targ
 		Rules_Targets_Map.Add(rule, targets);
 	}
 	
+	if (rule->IsYouRule())
+	{
+		IsYouObjects.Add(target);
+	}
 }
 
 void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* target)
@@ -86,6 +97,13 @@ void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* t
 	if (Rules_Targets_Map.Contains(rule))
 	{
 		Rules_Targets_Map[rule].RuleTargets.Remove(target);
+
+		if (rule->IsYouRule())
+		{
+			IsYouObjects.Remove(target);
+		}
+
+		CheckGameFinished();
 	}
 }
 
@@ -117,5 +135,13 @@ void ABIY_GameMode::InitObjectsStates()
 	{
 		itr->CachedObjectState.UpdateStructWithBaba(itr);
 		itr->PostUndo();//yes this is not undo but this forces the activators to try to activate the rules when the game starts.
+	}
+}
+
+void ABIY_GameMode::EvaluateAllRules()
+{
+	for (auto& itr : RuleActivatorsList)
+	{
+		itr->PostUndo();
 	}
 }
