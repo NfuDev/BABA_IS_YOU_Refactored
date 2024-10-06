@@ -35,9 +35,8 @@ struct FRuleTargets
 
 	FRuleTargets() {}
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Baba Structs")
-	TArray<ABaseBabaObject*> RuleTargets;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Baba Structs")
+	TArray<UBabaRule*> AppliedRulesOnType;
 };
 
 /**
@@ -112,9 +111,9 @@ public:
 
 	/*saves what rule affects which objects*/
 	UPROPERTY()
-	TMap<UBabaRule*, FRuleTargets> Rules_Targets_Map;
-	void RegisterTargetForRule(UBabaRule* rule, ABaseBabaObject* target);
-	void UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* target);
+	TMap<TSubclassOf<ABaseBabaObject>, FRuleTargets> Map_RulesOnObjectType;
+	void RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType);
+	void UnRegisterTargetFormRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType);
 
 
 	//save all the baba objects in the level once so we dont need to query them everytime we want to store the game state
@@ -138,7 +137,7 @@ public:
 	FORCEINLINE int32 IsYouCount() { return IsYouObjects.Num(); }
 
 	UFUNCTION(BlueprintCallable, Category = "Baba Is You|Debugging")
-	FORCEINLINE TMap<UBabaRule*, FRuleTargets> GetRuleAndTargets() { return Rules_Targets_Map; };
+	FORCEINLINE TMap<TSubclassOf<ABaseBabaObject>, FRuleTargets> GetRuleAndTargets() { return Map_RulesOnObjectType; };
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Is You|Debugging")
 	void DebugPreviusLocation(FVector location, int entries, UPaperFlipbook* Visuals);

@@ -7,20 +7,25 @@
 //rules only cares about left and top , since the rules are written from left to right and up to down.
 void ATxT_RuleHolder::TxTDoYourThing(EPushDirection ChangeDirection)
 {
+	bool bIsVerticalMovement = (ChangeDirection == EPushDirection::UP || ChangeDirection == EPushDirection::Down);
+	bool bIsHorizentalMovement = (ChangeDirection == EPushDirection::Left || ChangeDirection == EPushDirection::Right);
 	//tell last one we moved
-	if (LastAlingedActivatorUpper)
+	if (LastAlingedActivatorUpper && bIsHorizentalMovement)
 		LastAlingedActivatorUpper->TxTDoYourThing(ChangeDirection);
-	if (LastAlingedActivatorLeft)
+	if (LastAlingedActivatorLeft && bIsVerticalMovement)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 
 	FVector DummyVector = FVector();
-	LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
-	LastAlingedActivatorUpper = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+	if(bIsVerticalMovement)
+	  LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+
+	if(bIsHorizentalMovement)
+	  LastAlingedActivatorUpper = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
 
 	//try trigger new activator if found
-	if (LastAlingedActivatorUpper)
+	if (LastAlingedActivatorUpper && bIsHorizentalMovement)
 		LastAlingedActivatorUpper->TxTDoYourThing(ChangeDirection);
-	if (LastAlingedActivatorLeft)
+	if (LastAlingedActivatorLeft && bIsVerticalMovement)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 

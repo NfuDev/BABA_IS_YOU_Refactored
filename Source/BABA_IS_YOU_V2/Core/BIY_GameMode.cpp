@@ -37,7 +37,7 @@ void ABIY_GameMode::BeginPlay()
 
 void ABIY_GameMode::RegisterYouObject(ABaseBabaObject* newObject)
 {
-	   IsYouObjects.Add(newObject);
+	   IsYouObjects.AddUnique(newObject);
 }
 
 //probably will need to update to use classes 
@@ -46,7 +46,7 @@ void ABIY_GameMode::UnRegisterYouObject(ABaseBabaObject* Object)
 	//this for death by messing with the rules.
 	if (IsYouObjects.Contains(Object))
 	{
-		IsYouObjects.Remove(Object); 
+		IsYouObjects.Remove(Object);
 	}
 	if (IsYouObjects.Num() == 0)
 	{
@@ -61,7 +61,7 @@ void ABIY_GameMode::OnYouObjectDied(ABaseBabaObject* Object)
 	
 	for (auto& itr : IsYouObjects)
 	{
-		if (itr->BabaObjectState == EBabaObjectState::Dead)
+		if (Object->BabaObjectState == EBabaObjectState::Dead)
 		{
 			DeadCount++;
 		}
@@ -73,37 +73,34 @@ void ABIY_GameMode::OnYouObjectDied(ABaseBabaObject* Object)
 	}
 }
 
-void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, ABaseBabaObject* target)
+void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType)
 {
-	if (Rules_Targets_Map.Contains(rule))
+	if (Map_RulesOnObjectType.Contains(ObjectType))
 	{
-		Rules_Targets_Map[rule].RuleTargets.Add(target);
+		FString Results = "Rules Before Adding : \n";
+		for (auto& itr : Map_RulesOnObjectType[ObjectType].AppliedRulesOnType)
+		{
+			Results += itr->GetName() + "\n";
+		}
+		UE_LOG(LogTemp, Warning, TEXT("DEBUG REGISTER : Added %s To Map, map had before : %s "),*rule->GetName(), *Results);
+
+		Map_RulesOnObjectType[ObjectType].AppliedRulesOnType.Add(rule);
 	}
 	else
 	{
 		FRuleTargets targets;
-		targets.RuleTargets.Add(target);
-		Rules_Targets_Map.Add(rule, targets);
+		targets.AppliedRulesOnType.Add(rule);
+		Map_RulesOnObjectType.Add(ObjectType, targets);
 	}
-	
-	if (rule->IsYouRule())
-	{
-		IsYouObjects.Add(target);
-	}
+
 }
 
-void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, ABaseBabaObject* target)
+void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType)
 {
-	if (Rules_Targets_Map.Contains(rule))
+	if (Map_RulesOnObjectType.Contains(ObjectType))
 	{
-		Rules_Targets_Map[rule].RuleTargets.Remove(target);
-
-		if (rule->IsYouRule())
-		{
-			IsYouObjects.Remove(target);
-		}
-
-		CheckGameFinished();
+		UE_LOG(LogTemp, Warning, TEXT("Removed Target From Rules Map"));
+		Map_RulesOnObjectType[ObjectType].AppliedRulesOnType.RemoveSingle(rule);
 	}
 }
 

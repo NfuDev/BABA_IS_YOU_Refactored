@@ -52,7 +52,7 @@ private:
 	void PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids);
 	void Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis);
 
-	void PostTypeRestored();
+	std::tuple<bool, ATxT_RuleTarget*> TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent);
 
 	UPROPERTY()
 	TSubclassOf<ABaseBabaObject> LeftRight_SwitchedToType;
@@ -60,4 +60,6 @@ private:
 	UPROPERTY()
 	TSubclassOf<ABaseBabaObject> UpDown_SwitchedToType;
 
+	//debugging only.
+	int32 CallsCount = 0;
 };

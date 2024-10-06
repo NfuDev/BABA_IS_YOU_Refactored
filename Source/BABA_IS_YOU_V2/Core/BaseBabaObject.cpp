@@ -32,14 +32,6 @@ void ABaseBabaObject::ApplyRuleOnObject(UBabaRule* Rule)
 	UBabaRuleEffect* temp = Rule->GetRuleEffect(this);
 	temp->RegisterTarget(this);
 	AppliedRules.Add(Rule);
-
-	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM)
-	{
-		GM->RegisterTargetForRule(Rule, this);
-	}
-
 }
 
 void ABaseBabaObject::RemoveRuleEffectFromObject(UBabaRule* Rule)
@@ -55,10 +47,6 @@ void ABaseBabaObject::RemoveRuleEffectFromObject(UBabaRule* Rule)
 
 		ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-		if (GM)
-		{
-			GM->UnRegisterTargetFormRule(Rule, this);
-		}
 	}
 }
 
@@ -91,6 +79,7 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 		{
 			PreChangeLocation();
 			SetActorLocation(NextGrid);
+			NextTile->PostChangeLocation(Direction);//not good approach to fix the issue of contenuios pushing but it is a hacky workaround , will upgrade later
 			PostChangeLocation(Direction);
 			bBabaObjectUpdated = true;
 			return true;

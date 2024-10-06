@@ -2,48 +2,61 @@
 
 
 #include "TxT_RuleTarget.h"
-#include "Kismet/Gameplaystatics.h"
+#include "BIY_GameMode.h"
 #include "TxT_RuleActivator.h"
 
 //targets cares only about the right and bottom grids
 void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 {
-	if (LastAlingedActivatorRight)
+
+	bool bIsVerticalMovement = (ChangeDirection == EPushDirection::UP || ChangeDirection == EPushDirection::Down);
+	bool bIsHorizentalMovement = (ChangeDirection == EPushDirection::Left || ChangeDirection == EPushDirection::Right);
+
+	if (LastAlingedActivatorRight && bIsVerticalMovement)
 		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorBottom)
+	if (LastAlingedActivatorBottom && bIsHorizentalMovement)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorUp)
+	if (LastAlingedActivatorUp && bIsHorizentalMovement)
 		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorLeft)
+	if (LastAlingedActivatorLeft && bIsVerticalMovement)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 
 
 	FVector DummyVector = FVector();
-	LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
-	LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
-	LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
-	LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+	if(bIsVerticalMovement)
+	 LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
+
+	if(bIsHorizentalMovement)
+	 LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
+
+	if (bIsHorizentalMovement)
+	 LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+
+	if (bIsVerticalMovement)
+	 LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
 
-	if (LastAlingedActivatorRight)
+	if (LastAlingedActivatorRight && bIsVerticalMovement)
 		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorBottom)
+	if (LastAlingedActivatorBottom && bIsHorizentalMovement)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 
-
-	if (LastAlingedActivatorUp)
+	if (LastAlingedActivatorUp && bIsHorizentalMovement)
 		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorLeft)
+	if (LastAlingedActivatorLeft && bIsVerticalMovement)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 
 void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 {
+
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	TArray<AActor*> FoundObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Target, FoundObjects);
 
@@ -70,13 +83,26 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 		if (AsBabaObejct)
 		{
 			AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule);
+			if (GM)
+			{
+				if (RuleHolder->Rule->IsYouRule())
+				{
+					GM->IsYouObjects.AddUnique(AsBabaObejct);
+				}
+			}
 		}
 	}
+
+	if (GM)
+	  GM->RegisterTargetForRule(RuleHolder->Rule, Target);
+			
 }
 
 void ATxT_RuleTarget::RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder)
 {
 	if (!RuleHolder->Rule) return;
+
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	ContradictionVisuals->SetVisibility(false);
 	RuleHolder->ContradictionVisuals->SetVisibility(false);
@@ -90,6 +116,18 @@ void ATxT_RuleTarget::RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder)
 		if (AsBabaObejct)
 		{
 			AsBabaObejct->RemoveRuleEffectFromObject(RuleHolder->Rule);
+
+			if (GM)
+			{
+				if (RuleHolder->Rule->IsYouRule())
+				{
+					GM->IsYouObjects.Remove(AsBabaObejct);
+					GM->OnYouObjectDied(AsBabaObejct);
+				}
+			}
 		}
 	}
+
+	if (GM)
+		GM->UnRegisterTargetFormRule(RuleHolder->Rule, Target);
 }

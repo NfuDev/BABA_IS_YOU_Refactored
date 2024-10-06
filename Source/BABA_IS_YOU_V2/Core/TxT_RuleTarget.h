@@ -33,16 +33,16 @@ public:
 
 private:
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorRight;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorBottom;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorUp;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorLeft;
 
 };
