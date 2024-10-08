@@ -49,7 +49,7 @@ bool ABaseBabaObject::CanApplyRule(FGuid RuleID)
 			break;
 		}
 	}
-	return bCanBeApplied;
+	return true;
 }
 
 void ABaseBabaObject::RemoveRuleEffectFromObject(UBabaRule* Rule)

@@ -35,16 +35,16 @@ void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 	 LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
 
-	if (LastAlingedActivatorRight && bIsVerticalMovement)
+	if (LastAlingedActivatorRight)
 		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorBottom && bIsHorizentalMovement)
+	if (LastAlingedActivatorBottom)
 		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorUp && bIsHorizentalMovement)
+	if (LastAlingedActivatorUp)
 		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorLeft && bIsVerticalMovement)
+	if (LastAlingedActivatorLeft)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 
@@ -56,7 +56,7 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 	TArray<AActor*> FoundObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Target, FoundObjects);
 
-	if (FoundObjects.Num() > 0)
+	if (FoundObjects.Num() > 0 && !GM->bWasUndoMove)
 	{
 		//we take the first object and test for contradiction
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(FoundObjects[0]);
@@ -79,6 +79,24 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(itr);
 		if (AsBabaObejct)
 		{
+			if (GM->bWasUndoMove)
+			{
+				//we remove last added rule if  it was undo move.
+				if (AsBabaObejct->AppliedRules.Num() > 0)
+				{
+					UBabaRule* _Rule = AsBabaObejct->AppliedRules[AsBabaObejct->AppliedRules.Num() - 1].WrappedRule;
+					AsBabaObejct->RemoveRuleEffectFromObject(_Rule);
+					GM->UnRegisterTargetFormRule(_Rule, Target);
+
+					if (_Rule->IsYouRule())
+					{
+						GM->IsYouObjects.Remove(AsBabaObejct);
+						GM->OnYouObjectDied(AsBabaObejct);
+					}
+				}
+				
+			}
+
 			if(AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule, RuleHolder->RuleID))
 			{
 				ruleApplied = true;

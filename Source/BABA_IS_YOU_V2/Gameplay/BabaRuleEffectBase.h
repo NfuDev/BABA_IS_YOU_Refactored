@@ -18,6 +18,8 @@ class UBabaRuleEffect : public UObject
 public:
 	UBabaRuleEffect() {};
 
+	virtual void BeginDestroy() override;
+
 	UWorld* GetWorld() const;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Is You")

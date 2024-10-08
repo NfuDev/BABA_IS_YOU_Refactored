@@ -4,6 +4,12 @@
 #include "BabaRuleEffectBase.h"
 #include "..//Core/BaseBabaObject.h"
 
+void UBabaRuleEffect::BeginDestroy()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Debug Effect Life Time : %s Was Removed!"), *GetName());
+	Super::BeginDestroy();
+}
+
 UWorld* UBabaRuleEffect::GetWorld() const
 {
 #if WITH_EDITOR
@@ -30,6 +36,7 @@ void UBabaRuleEffect::RegisterTarget(ABaseBabaObject* targetObject)
 
 void UBabaRuleEffect::UnRegisterTarget()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Debug Effect Life Time : %s Was Unregistered!"), *GetName());
 	UE_LOG(LogTemp, Warning, TEXT("%s : EFFECT Removed!"), __FUNCTION__);
 	AffectedObject->AppliedEffects.Remove(this);
 	EffectCleanup();
@@ -41,4 +48,5 @@ void UBabaRuleEffect::UnRegisterTarget()
 
 	AffectedObject = nullptr;
 	MarkAsGarbage();
+	ConditionalBeginDestroy();
 };
