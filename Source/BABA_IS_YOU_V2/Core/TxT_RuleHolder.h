@@ -16,6 +16,8 @@ class BABA_IS_YOU_V2_API ATxT_RuleHolder : public ABabaTextObjectBase
 	
 public:
 	
+	ATxT_RuleHolder() { RuleID = FGuid(); };
+
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
 	/*Base Baba Text Object Interface*/
@@ -36,5 +38,8 @@ public:
 
 	UPROPERTY()
 	class ATxT_RuleActivator* LastAlingedActivatorLeft;
+
+	UPROPERTY()
+	FGuid RuleID;
 
 };

@@ -73,23 +73,31 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 		}
 	}
 
+	bool ruleApplied = false;
 	for (auto& itr : FoundObjects)
 	{
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(itr);
 		if (AsBabaObejct)
 		{
-			AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule);
-			if (GM)
+			if(AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule, RuleHolder->RuleID))
 			{
-				if (RuleHolder->Rule->IsYouRule())
+				ruleApplied = true;
+				if (GM)
 				{
-					GM->IsYouObjects.AddUnique(AsBabaObejct);
+					if (RuleHolder->Rule->IsYouRule())
+					{
+						GM->IsYouObjects.AddUnique(AsBabaObejct);
+					}
 				}
+			}
+			else
+			{
+				break;//if the first one was not able to apply we are sure the rest wont since they are all instances of the same object.
 			}
 		}
 	}
 
-	if (GM)
+	if (GM && ruleApplied)
 	  GM->RegisterTargetForRule(RuleHolder->Rule, Target);
 			
 }

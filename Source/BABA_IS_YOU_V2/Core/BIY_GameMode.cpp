@@ -133,7 +133,7 @@ void ABIY_GameMode::UndoMove()
 	}
 
 	//this need to be called for all after all objcts finish undo, so we call it here and not in the undo function per object since that is not accurate
-	for (auto& itr : BabaObjectsInLevel)
+	for (auto& itr : RuleActivatorsList)
 	{
 		itr->PostUndo();
 	}

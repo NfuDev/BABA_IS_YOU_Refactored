@@ -45,6 +45,7 @@ enum class EBabaObjectState : uint8
 
 // UNDO MECHANICS STUFF
 
+
 USTRUCT(BlueprintType, Blueprintable)
 struct FBabaObjectState
 {
@@ -112,6 +113,25 @@ struct FBabaObjectState
 };
 
 
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FBabaRuleWrapper
+{
+	GENERATED_BODY()
+
+	FBabaRuleWrapper() {};
+	FBabaRuleWrapper(UBabaRule* Rule, FGuid ID) : WrappedRule(Rule), RuleID(ID) {};
+
+	UPROPERTY()
+	UBabaRule* WrappedRule;
+
+	UPROPERTY()
+	FGuid RuleID;
+
+	bool operator==(const FGuid& ID) const { return RuleID == ID; }
+	bool operator==(const UBabaRule* Rule) const { return WrappedRule == Rule; }
+};
+
 /**
  * Base Baba Object , can be baba, Wall, Rule , etc
  */
@@ -134,10 +154,12 @@ public:
 
 	/*mapped one to one with the effects so we can easily remove the effects wihtout searching*/
 	UPROPERTY()
-	TArray<UBabaRule*> AppliedRules;
+	TArray<FBabaRuleWrapper> AppliedRules;
 
 	UFUNCTION(BlueprintCallable, Category = "Baba Functions")
-	void ApplyRuleOnObject(UBabaRule* Rule);
+	bool ApplyRuleOnObject(UBabaRule* Rule, FGuid RuleID);
+
+	bool CanApplyRule(FGuid RuleID);
 
 	UFUNCTION(BlueprintCallable, Category = "Baba Functions")
 	void RemoveRuleEffectFromObject(UBabaRule* Rule);
@@ -160,6 +182,7 @@ public:
 
 
 	void CheckForOverlap();
+
 
 	UPROPERTY()
 	EBabaObjectState BabaObjectState;

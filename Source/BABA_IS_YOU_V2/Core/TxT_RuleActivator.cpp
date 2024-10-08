@@ -107,7 +107,7 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 
 			for (UBabaRule* rule : AppliedRuleOnThisType.AppliedRulesOnType)
 			{
-				SwappedObject->ApplyRuleOnObject(rule);
+				//SwappedObject->ApplyRuleOnObject(rule);
 			}
 
 			itr->Destroy();
@@ -127,6 +127,7 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	}
 }
 
+//to do , make it work with direction enum so it sets the refernce correctly since now the target checks for 4 activators so one boolean is not enough to make it right 
 std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid, bool bHorizental, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent)
 {
 	bool ActivateSucess = false;

@@ -27,18 +27,36 @@ void ABaseBabaObject::BeginPlay()
 	SetActorLocation(initialLocation);
 }
 
-void ABaseBabaObject::ApplyRuleOnObject(UBabaRule* Rule)
+bool ABaseBabaObject::ApplyRuleOnObject(UBabaRule* Rule, FGuid RuleID)
 {
+	if (!CanApplyRule(RuleID)) return false;
+
 	UBabaRuleEffect* temp = Rule->GetRuleEffect(this);
 	temp->RegisterTarget(this);
-	AppliedRules.Add(Rule);
+	AppliedRules.Emplace(Rule, RuleID);
+
+	return true;
+}
+
+bool ABaseBabaObject::CanApplyRule(FGuid RuleID)
+{
+	bool bCanBeApplied = true;
+	for (auto& itr : AppliedRules)
+	{
+		if (itr == RuleID)
+		{
+			bCanBeApplied = false;
+			break;
+		}
+	}
+	return bCanBeApplied;
 }
 
 void ABaseBabaObject::RemoveRuleEffectFromObject(UBabaRule* Rule)
 {
 	if (AppliedRules.Contains(Rule))
 	{
-		int32 index = AppliedRules.Find(Rule);
+		int32 index = AppliedRules.IndexOfByPredicate([&](const FBabaRuleWrapper& Wrapper) { return Wrapper == Rule; });
 
 		FString RemovedName = AppliedEffects[index]->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("BABA REMOVE : trying to remove %s at index %d"), *RemovedName, index);
