@@ -33,10 +33,16 @@ struct FRuleTargets
 {
 	GENERATED_BODY()
 
-	FRuleTargets() {}
+	FRuleTargets() { bIsValid = false; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Baba Structs")
 	TArray<UBabaRule*> AppliedRulesOnType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Baba Structs")
+	FGuid RuleID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Baba Structs")
+	bool bIsValid;
 };
 
 /**
@@ -112,9 +118,9 @@ public:
 	/*saves what rule affects which objects*/
 	UPROPERTY()
 	TMap<TSubclassOf<ABaseBabaObject>, FRuleTargets> Map_RulesOnObjectType;
-	void RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType);
+	void RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType, FGuid RuleID);
 	void UnRegisterTargetFormRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType);
-
+	FRuleTargets& GetRulesForObjectType(TSubclassOf<ABaseBabaObject> ObjectType);
 
 	//save all the baba objects in the level once so we dont need to query them everytime we want to store the game state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

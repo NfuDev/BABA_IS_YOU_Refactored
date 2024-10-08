@@ -116,7 +116,7 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 	}
 
 	if (GM && ruleApplied)
-	  GM->RegisterTargetForRule(RuleHolder->Rule, Target);
+	  GM->RegisterTargetForRule(RuleHolder->Rule, Target, RuleHolder->RuleID);
 			
 }
 

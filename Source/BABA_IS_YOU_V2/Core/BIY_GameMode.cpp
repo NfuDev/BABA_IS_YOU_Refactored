@@ -84,7 +84,7 @@ inline void ABIY_GameMode::CheckGameFinished()
 	}
 }
 
-void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType)
+void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBabaObject> ObjectType, FGuid RuleID)
 {
 	if (Map_RulesOnObjectType.Contains(ObjectType))
 	{
@@ -101,6 +101,8 @@ void ABIY_GameMode::RegisterTargetForRule(UBabaRule* rule, TSubclassOf<ABaseBaba
 	{
 		FRuleTargets targets;
 		targets.AppliedRulesOnType.Add(rule);
+		targets.RuleID = RuleID;
+		targets.bIsValid = true;
 		Map_RulesOnObjectType.Add(ObjectType, targets);
 	}
 
@@ -113,6 +115,17 @@ void ABIY_GameMode::UnRegisterTargetFormRule(UBabaRule* rule, TSubclassOf<ABaseB
 		UE_LOG(LogTemp, Warning, TEXT("Removed Target From Rules Map"));
 		Map_RulesOnObjectType[ObjectType].AppliedRulesOnType.RemoveSingle(rule);
 	}
+}
+
+FRuleTargets& ABIY_GameMode::GetRulesForObjectType(TSubclassOf<ABaseBabaObject> ObjectType)
+{
+	static FRuleTargets InValidRulesTarget = FRuleTargets();
+
+	if(Map_RulesOnObjectType.Contains(ObjectType))
+	   return Map_RulesOnObjectType[ObjectType];
+
+	//if no entry found or the map is empty we get an invalid rule target so we can use it to ignore applying rules later on type switch.
+	return InValidRulesTarget;
 }
 
 void ABIY_GameMode::TryUpdateBabaGameState()

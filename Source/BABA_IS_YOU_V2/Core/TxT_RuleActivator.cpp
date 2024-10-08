@@ -10,6 +10,22 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 	CallsCount++;
 	UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR CALLS : called %d times"), CallsCount);
 
+	if (UpperTarget && UpDown_SwitchedToType)
+	{
+		PreformObjectTypeSwitch(UpDown_SwitchedToType, UpperTarget->Target, true);
+		BottomRule = nullptr;
+		UpperTarget = nullptr;
+		UpDown_SwitchedToType = nullptr;
+	}
+
+	if (LeftTarget && LeftRight_SwitchedToType)
+	{
+		PreformObjectTypeSwitch(LeftRight_SwitchedToType, LeftTarget->Target, false);
+		RightRule = nullptr;
+		LeftTarget = nullptr;
+		LeftRight_SwitchedToType = nullptr;
+	}
+
 	FVector DummyVector = FVector();
 	ATxT_RuleTarget* UpperGrid = Cast<ATxT_RuleTarget>(GetObjectInGrid(EPushDirection::UP, DummyVector));//since we only need the object and not wanting to move we dont need real vector
 	ABaseBabaObject* LowerGrid =GetObjectInGrid(EPushDirection::Down, DummyVector);//since this may be a rule or another target for type swap it better to get it by the general type then cast later.
@@ -37,7 +53,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 			{
 				UpperTarget->RemoveRuleFromTarget(BottomRule);
 				BottomRule = nullptr;
-				UpperTarget = nullptr;
+				UpperTarget = UpperGrid;
 			}
 
 		}
@@ -61,8 +77,8 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 			else if (RightRule && LeftTarget)
 			{
 				LeftTarget->RemoveRuleFromTarget(RightRule);
-				LeftTarget = nullptr;
 				RightRule = nullptr;
+				LeftTarget = LeftGrid;
 			}
 
 		}
@@ -86,7 +102,7 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	//this template is used to feed the swapped object with the applied rule on it's type at the moment of spawning so it flows with the game current rules set.
-	ABaseBabaObject* NewTypeTemplate = Cast<ABaseBabaObject>(UGameplayStatics::GetActorOfClass(GetWorld(), ToThis));
+	//ABaseBabaObject* NewTypeTemplate = Cast<ABaseBabaObject>(UGameplayStatics::GetActorOfClass(GetWorld(), ToThis)); not needed since we have the rules vs type map
 
 	TArray<AActor*> FoundObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), This, FoundObjects);
@@ -98,18 +114,22 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	
 	if(GM)
 	{
-		FRuleTargets& AppliedRuleOnThisType = GM->Map_RulesOnObjectType[ToThis];
+		FRuleTargets& AppliedRuleOnThisType = GM->GetRulesForObjectType(ToThis);
 
 		for (auto& itr : FoundObjects)
 		{
 			ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
 			NewObjects.Add(SwappedObject);
 
-			for (UBabaRule* rule : AppliedRuleOnThisType.AppliedRulesOnType)
+			if(AppliedRuleOnThisType.bIsValid)
 			{
-				//SwappedObject->ApplyRuleOnObject(rule);
+				for (UBabaRule* rule : AppliedRuleOnThisType.AppliedRulesOnType)
+				{
+					SwappedObject->ApplyRuleOnObject(rule, AppliedRuleOnThisType.RuleID);
+				}
 			}
 
+			GM->BabaObjectsInLevel.RemoveSingle(Cast<ABaseBabaObject>(itr));
 			itr->Destroy();
 		}
 
@@ -155,6 +175,7 @@ std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarg
 		else
 		{
 			ATxT_RuleTarget* GridAstarget = Cast<ATxT_RuleTarget>(AssumedRuleGrid);
+			PostActivationEvent(AsRulegrid, TargetGrid);
 			return std::make_tuple(ActivateSucess, GridAstarget);
 		}
 	}
