@@ -19,6 +19,12 @@ class BABA_IS_YOU_V2_API ATxT_RuleActivator : public ABabaTextObjectBase
 	ATxT_RuleActivator() {};
 
 public:
+
+	/*Base Baba Object Interface*/
+	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection);};
+	virtual void PostUndo() override { TxTDoYourThing(EPushDirection()); };
+	/*Base Baba Object Interface*/
+
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
 	/*Base Baba Text Object Interface*/
@@ -52,7 +58,7 @@ private:
 	void PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids);
 	void Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis);
 
-	std::tuple<bool, ATxT_RuleTarget*> TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent);
+	std::tuple<bool, ATxT_RuleTarget*> TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid,bool bHorizental, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent);
 
 	UPROPERTY()
 	TSubclassOf<ABaseBabaObject> LeftRight_SwitchedToType;

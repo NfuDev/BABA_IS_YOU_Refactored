@@ -31,8 +31,6 @@ public:
 	void RemoveRuleFromTarget(ATxT_RuleHolder* RuleHolder);
 
 
-private:
-
 	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorRight;
 

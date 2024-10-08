@@ -4,6 +4,7 @@
 #include "TxT_RuleHolder.h"
 #include "TxT_RuleActivator.h"
 
+
 //rules only cares about left and top , since the rules are written from left to right and up to down.
 void ATxT_RuleHolder::TxTDoYourThing(EPushDirection ChangeDirection)
 {

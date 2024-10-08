@@ -19,49 +19,53 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 	bool ActivationState = false;
 	ATxT_RuleTarget* VerticalTransformTarget;
-
-	std::tie(ActivationState, VerticalTransformTarget) = TryActivate(UpperGrid, LowerGrid,[this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
-		{
-			LastAppliedRuleToUpper = ruleHolder;
-			BottomRule = ruleHolder;
-			UpperTarget = target;
-		});
-
-	if (!ActivationState)
+	if (!(UpperTarget == UpperGrid && BottomRule == LowerGrid))//this checks if nothing changed we dont reactivate.
 	{
-		if (VerticalTransformTarget)
-			PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, true);
-			  
-		else if (BottomRule && UpperTarget)
+		std::tie(ActivationState, VerticalTransformTarget) = TryActivate(UpperGrid, LowerGrid,true, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
+			{
+				LastAppliedRuleToUpper = ruleHolder;
+				BottomRule = ruleHolder;
+				UpperTarget = target;
+			});
+
+		if (!ActivationState)
 		{
-			UpperTarget->RemoveRuleFromTarget(BottomRule);
-			BottomRule = nullptr;
-			UpperTarget = nullptr;
+			if (VerticalTransformTarget)
+				PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, true);
+
+			else if (BottomRule && UpperTarget)
+			{
+				UpperTarget->RemoveRuleFromTarget(BottomRule);
+				BottomRule = nullptr;
+				UpperTarget = nullptr;
+			}
+
 		}
-			
 	}
 
 	ATxT_RuleTarget* HorizentalTransformTarget;
-
-	std::tie(ActivationState, HorizentalTransformTarget) = TryActivate(LeftGrid, RightGrid,[this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
-		{
-			LastAppliedRuleToLeft = ruleHolder;
-			RightRule = ruleHolder;
-			LeftTarget = target;
-		});
-
-	if (!ActivationState)
+	if (!(LeftTarget == LeftGrid && RightRule == RightGrid))
 	{
-		if(HorizentalTransformTarget)
-		  PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, false);
-
-		else if (RightRule && LeftTarget)
+		std::tie(ActivationState, HorizentalTransformTarget) = TryActivate(LeftGrid, RightGrid,false, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
 			{
-			   LeftTarget->RemoveRuleFromTarget(RightRule);
-			   LeftTarget = nullptr;
-			   RightRule = nullptr;
+				LastAppliedRuleToLeft = ruleHolder;
+				RightRule = ruleHolder;
+				LeftTarget = target;
+			});
+
+		if (!ActivationState)
+		{
+			if (HorizentalTransformTarget)
+				PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, false);
+
+			else if (RightRule && LeftTarget)
+			{
+				LeftTarget->RemoveRuleFromTarget(RightRule);
+				LeftTarget = nullptr;
+				RightRule = nullptr;
 			}
-			 
+
+		}
 	}
 }
 
@@ -123,7 +127,7 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	}
 }
 
-std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent)
+std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarget* TargetGrid, ABaseBabaObject* AssumedRuleGrid, bool bHorizental, TFunction<void(ATxT_RuleHolder*, ATxT_RuleTarget*)> PostActivationEvent)
 {
 	bool ActivateSucess = false;
 
@@ -135,6 +139,16 @@ std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarg
 			TargetGrid->ApplyRuleOnTarget(AsRulegrid);
 			ActivateSucess = true;
 			PostActivationEvent(AsRulegrid, TargetGrid);
+			if (bHorizental)
+			{
+				TargetGrid->LastAlingedActivatorBottom = this;
+				AsRulegrid->LastAlingedActivatorUpper = this;
+			}
+			else
+			{
+				TargetGrid->LastAlingedActivatorRight = this;
+				AsRulegrid->LastAlingedActivatorLeft = this;
+			}
 			return std::make_tuple(ActivateSucess, nullptr);
 		}
 		else
@@ -146,103 +160,3 @@ std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarg
 
 	return std::tuple<bool, ATxT_RuleTarget*>();
 }
-
-/*
-* if (UpperGrid && LowerGrid)
-	{
-		ATxT_RuleTarget* GridAstarget = Cast<ATxT_RuleTarget>(LowerGrid);
-
-		if(UpperGrid != UpperTarget)
-		{
-			BottomRule = Cast<ATxT_RuleHolder>(LowerGrid);
-			UpperTarget = UpperGrid;
-			if (BottomRule)
-			{
-				if (IsValid(UpperTarget->Target) && IsValid(BottomRule->Rule))
-				{
-					//apply the rule on the target
-					UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to apply rule %s On %s"), *BottomRule->Rule->GetName(), *UpperTarget->Target->GetName());
-					UpperTarget->ApplyRuleOnTarget(BottomRule);
-					LastAppliedRuleToUpper = BottomRule;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to Activate Invalid Objects"));
-				}
-			}
-
-			else if (GridAstarget)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Preform Type Swap from %s to %s"), *UpperTarget->Target->GetName(), *GridAstarget->Target->GetName());
-				PreformObjectTypeSwitch(UpperTarget->Target, GridAstarget->Target, true);
-			}
-		}
-	}
-
-	else
-	{
-		if (UpperTarget && LastAppliedRuleToUpper)
-		{
-			UpperTarget->RemoveRuleFromTarget(LastAppliedRuleToUpper);
-			LastAppliedRuleToUpper = nullptr;
-			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Rule Removed!!"));
-		}
-		else if (UpDown_SwitchedToType && UpperTarget)
-		{
-			TSubclassOf<ABaseBabaObject> TempClass = UpDown_SwitchedToType;
-			UpDown_SwitchedToType = NULL;
-			Internal_PreformObjectTypeSwitch(TempClass, UpperTarget->Target);
-			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Restored Transformation from %s"), *UpDown_SwitchedToType->GetName());
-
-		}
-		if (!UpperGrid)
-			UpperTarget = nullptr;
-	}
-
-	if (LeftGrid && RightGrid)
-	{
-		if(LeftGrid != LeftTarget)
-		{
-			RightRule = Cast<ATxT_RuleHolder>(RightGrid);
-			LeftTarget = LeftGrid;
-			ATxT_RuleTarget* GridAstarget = Cast<ATxT_RuleTarget>(RightGrid);
-
-			if (RightRule)
-			{
-				if (IsValid(LeftTarget->Target) && IsValid(RightRule->Rule))
-				{
-					//apply the rule on the target
-					UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to apply rule %s On %s"), *RightRule->Rule->GetName(), *LeftTarget->Target->GetName());
-					LeftTarget->ApplyRuleOnTarget(RightRule);
-					LastAppliedRuleToLeft = RightRule;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : trying to Activate Invalid Objects"));
-				}
-			}
-			else if (GridAstarget)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Preform Type Swap from %s to %s"), *LeftTarget->Target->GetName(), *GridAstarget->Target->GetName());
-				PreformObjectTypeSwitch(LeftTarget->Target, GridAstarget->Target, false);
-			}
-		}
-	}
-	else
-	{
-		if (LeftTarget && LastAppliedRuleToLeft)
-		{
-			LeftTarget->RemoveRuleFromTarget(LastAppliedRuleToLeft);
-			LastAppliedRuleToLeft = nullptr;
-		}
-		else if (LeftRight_SwitchedToType && LeftTarget)
-		{
-			TSubclassOf<ABaseBabaObject> TempClass = LeftRight_SwitchedToType;
-			LeftRight_SwitchedToType = NULL;
-			Internal_PreformObjectTypeSwitch(TempClass, LeftTarget->Target);
-			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Restored Transformation from %s"), *LeftRight_SwitchedToType->GetName());
-		}
-		if (!LeftGrid)
-			LeftTarget = nullptr;
-	}
-*/

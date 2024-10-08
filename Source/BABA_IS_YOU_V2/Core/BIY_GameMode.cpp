@@ -125,6 +125,8 @@ void ABIY_GameMode::TryUpdateBabaGameState()
 
 void ABIY_GameMode::UndoMove()
 {
+	bWasUndoMove = true;
+
 	for (auto& itr : BabaObjectsInLevel)
 	{
 		itr->OnBabaUndo();
@@ -135,6 +137,8 @@ void ABIY_GameMode::UndoMove()
 	{
 		itr->PostUndo();
 	}
+
+	bWasUndoMove = false;
 }
 
 void ABIY_GameMode::InitObjectsStates()

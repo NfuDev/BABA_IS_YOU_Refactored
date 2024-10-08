@@ -15,10 +15,13 @@ class BABA_IS_YOU_V2_API ATxT_RuleHolder : public ABabaTextObjectBase
 	GENERATED_BODY()
 	
 public:
+	
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
 	/*Base Baba Text Object Interface*/
 
+
+	virtual void PostUndo() override {};//those do not need to do any action post undo the activator only should care about this 
 
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	UBabaRule* Rule;
@@ -27,8 +30,6 @@ public:
 	//also contradiction is part of the rule data asset for convenience, since this is just a holder it should not have anything to do with what will contradict the rule. 
 
 	[[nodiscard]] bool CheckForContradiction(ABaseBabaObject* IncomingTarget);
-
-private:
 
 	UPROPERTY()
 	class ATxT_RuleActivator* LastAlingedActivatorUpper;

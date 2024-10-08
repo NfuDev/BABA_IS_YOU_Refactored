@@ -129,6 +129,8 @@ public:
 	void InitObjectsStates();
 	void EvaluateAllRules();
 
+	bool bWasUndoMove = false;
+
 	//###################################################
 	//################# DEBUGGING #######################
 	//###################################################

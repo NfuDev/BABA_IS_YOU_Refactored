@@ -3,6 +3,7 @@
 
 #include "BabaTextObjectBase.h"
 #include "../Gameplay/GameEffects/Effect_IsPush.h"
+#include "BIY_GameMode.h"
 
 void ABabaTextObjectBase::BeginPlay()
 {
@@ -21,6 +22,17 @@ ABabaTextObjectBase::ABabaTextObjectBase()
 	ContradictionVisuals->SetRelativeLocation(FVector(0.0f, 0.0f, 5.0f));
 	ContradictionVisuals->SetupAttachment(RootComponent);
 	ContradictionVisuals->SetVisibility(false);
+}
+
+void ABabaTextObjectBase::PostChangeLocation(EPushDirection ChangeDirection)
+{
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GM)
+	{
+		if(!GM->bWasUndoMove)
+			TxTDoYourThing(ChangeDirection);
+	}
+
 }
 
 void ABabaTextObjectBase::PostUndo()

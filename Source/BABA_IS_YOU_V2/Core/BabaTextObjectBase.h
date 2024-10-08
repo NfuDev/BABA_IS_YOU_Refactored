@@ -24,7 +24,7 @@ public:
 	TObjectPtr<UPaperFlipbookComponent> ContradictionVisuals;
 
 	/*Base Baba Object Interface*/
-	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection);};
+	virtual void PostChangeLocation(EPushDirection ChangeDirection) override; //{ TxTDoYourThing(ChangeDirection);};
 	virtual void PostUndo() override;
 	/*Base Baba Object Interface*/
 
