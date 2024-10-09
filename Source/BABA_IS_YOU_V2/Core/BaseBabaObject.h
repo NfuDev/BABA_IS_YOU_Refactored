@@ -110,6 +110,9 @@ struct FBabaObjectState
 	UPROPERTY()
 	FString LastSavedVisualsID;
 
+	UPROPERTY()
+	EBabaObjectState BabaObjectState;
+
 };
 
 

@@ -448,6 +448,7 @@ void FBabaObjectState::UpdateStructWithBaba(ABaseBabaObject* BabaObject)
 
 	ObjectLocation = BabaObject->GetActorLocation();
 	ObjectVisual = BabaObject->VisualsComponent->GetFlipbook();
+	BabaObjectState = BabaObject->BabaObjectState;
 
 	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
 	if (AsObstacle)
@@ -467,6 +468,7 @@ void FBabaObjectState::UpdateBabaWithStruct(ABaseBabaObject* BabaObject)
 	BabaObject->SetActorLocation(ObjectLocation);
 	BabaObject->VisualsComponent->SetFlipbook(ObjectVisual);
 	BabaObject->bBabaObjectUpdated = false;
+	BabaObject->BabaObjectState = BabaObjectState;
 
 	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
 	if (AsObstacle)

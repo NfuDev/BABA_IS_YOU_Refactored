@@ -4,6 +4,12 @@
 #include "TxT_RuleActivator.h"
 #include "BIY_GameMode.h"
 
+/*to increase readablity*/
+#define VIRTICAL true
+#define HOREZINTAL false
+#define RVERSESWITCH true
+#define PREFORMSWITCH false
+/*to increase readablity*/
 
 void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 {
@@ -12,7 +18,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 	if (UpperTarget && UpDown_SwitchedToType)
 	{
-		PreformObjectTypeSwitch(UpDown_SwitchedToType, UpperTarget->Target, true);
+		PreformObjectTypeSwitch(UpDown_SwitchedToType, UpperTarget->Target, VIRTICAL, RVERSESWITCH);
 		BottomRule = nullptr;
 		UpperTarget = nullptr;
 		UpDown_SwitchedToType = nullptr;
@@ -20,7 +26,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 	if (LeftTarget && LeftRight_SwitchedToType)
 	{
-		PreformObjectTypeSwitch(LeftRight_SwitchedToType, LeftTarget->Target, false);
+		PreformObjectTypeSwitch(LeftRight_SwitchedToType, LeftTarget->Target, HOREZINTAL, PREFORMSWITCH);
 		RightRule = nullptr;
 		LeftTarget = nullptr;
 		LeftRight_SwitchedToType = nullptr;
@@ -47,7 +53,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		if (!ActivationState)
 		{
 			if (VerticalTransformTarget)
-				PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, true);
+				PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, VIRTICAL, PREFORMSWITCH);
 
 			else if (BottomRule && UpperTarget)
 			{
@@ -72,7 +78,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		if (!ActivationState)
 		{
 			if (HorizentalTransformTarget)
-				PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, false);
+				PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, HOREZINTAL, PREFORMSWITCH);
 
 			else if (RightRule && LeftTarget)
 			{
@@ -86,17 +92,17 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 }
 
 //moved here because i think the activator is the best place for this.
-void ATxT_RuleActivator::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids)
+void ATxT_RuleActivator::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids, bool ReverseTypeSwitch)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Transformation Complete!"));
 
 	TSubclassOf<ABaseBabaObject>& SwapContext = bBetweenUpDownGrids? UpDown_SwitchedToType : LeftRight_SwitchedToType;
 	SwapContext = ToThis;
 
-	Internal_PreformObjectTypeSwitch(This, ToThis);
+	Internal_PreformObjectTypeSwitch(This, ToThis, ReverseTypeSwitch);
 }
 
-void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis)
+void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool ReverseTypeSwitch)
 {
 
 	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -118,7 +124,15 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 
 		for (auto& itr : FoundObjects)
 		{
+			if (ReverseTypeSwitch && !itr->ActorHasTag(ToThis->GetFName()))
+				continue;
+
 			ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
+			FName ActorTag = This->GetFName();
+
+			if(!ReverseTypeSwitch)
+			   SwappedObject->Tags.Add(ActorTag);//we add the tag only when we are swapping type so we differ between orginal object type and transformed types.
+
 			NewObjects.Add(SwappedObject);
 
 			if(AppliedRuleOnThisType.bIsValid)
