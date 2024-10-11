@@ -171,6 +171,7 @@ void ABaseBabaObject::CheckForOverlap()
 void ABaseBabaObject::UpdateObjectState(EBabaObjectState NewState)
 {
 	BabaObjectState = NewState;
+	VisualsComponent->SetVisibility(BabaObjectState == EBabaObjectState::ALive);
 	//To Do , logics for death animations and save that so when game rewind we can restore killed object
 }
 
@@ -468,7 +469,7 @@ void FBabaObjectState::UpdateBabaWithStruct(ABaseBabaObject* BabaObject)
 	BabaObject->SetActorLocation(ObjectLocation);
 	BabaObject->VisualsComponent->SetFlipbook(ObjectVisual);
 	BabaObject->bBabaObjectUpdated = false;
-	BabaObject->BabaObjectState = BabaObjectState;
+	BabaObject->UpdateObjectState(BabaObjectState);//here it is better to call the update state , since that was the plan to have one place for setting this value and make visuals accordingly(done)
 
 	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
 	if (AsObstacle)
