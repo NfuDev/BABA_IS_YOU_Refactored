@@ -172,6 +172,11 @@ void ABaseBabaObject::UpdateObjectState(EBabaObjectState NewState)
 {
 	BabaObjectState = NewState;
 	VisualsComponent->SetVisibility(BabaObjectState == EBabaObjectState::ALive);
+
+	if (BabaObjectState == EBabaObjectState::Dead)
+	{
+		PostDeath();
+	}
 	//To Do , logics for death animations and save that so when game rewind we can restore killed object
 }
 
@@ -370,6 +375,30 @@ void ABaseBabaObstacle::PostChangeLocation(EPushDirection ChangeDirection)
 	}
 
 	UpdateVisuals();
+}
+
+void ABaseBabaObstacle::PostDeath()
+{
+	if (TopTile)
+	{
+		TopTile->BottomTile = nullptr;
+		TopTile->UpdateVisuals();
+	}
+	if (BottomTile)
+	{
+		BottomTile->TopTile = nullptr;
+		BottomTile->UpdateVisuals();
+	}
+	if (RightTile)
+	{
+		RightTile->LeftTile = nullptr;
+		RightTile->UpdateVisuals();
+	}
+	if (LeftTile)
+	{
+		LeftTile->RightTile = nullptr;
+		LeftTile->UpdateVisuals();
+	}
 }
 
 void ABaseBabaObstacle::UpdateVisuals()

@@ -181,6 +181,7 @@ public:
 	virtual void PostChangeLocation(EPushDirection ChangeDirection) { CheckForOverlap(); }
 	virtual void RegisterNeighbours() {};
 	virtual void PostUndo() {};
+	virtual void PostDeath() {};
 	/*Movement Inteface*/
 
 
@@ -254,6 +255,7 @@ public:
 	ABaseBabaObstacle();
 
 	virtual void PostChangeLocation(EPushDirection ChangeDirection) override;
+	virtual void PostDeath() override;
 
 	void UpdateVisuals();
 	

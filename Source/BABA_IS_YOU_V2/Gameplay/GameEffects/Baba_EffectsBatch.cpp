@@ -74,3 +74,39 @@ void UEffect_IsKill::OnOverlap(AActor* OverlappedObject)
 }
 
 //######## IS KILL #######################
+
+//######## Distructive Interaction ###################
+
+void UEffect_DistructiveInteraction::AffectStarted()
+{
+	AffectedObject->OnBabaObjectOverlap.AddUObject(this, &UEffect_DistructiveInteraction::OnOverlap);
+}
+
+void UEffect_DistructiveInteraction::OnOverlap(AActor* OverlappedObject)
+{
+	ABaseBabaObject* AsBabaObject = Cast<ABaseBabaObject>(OverlappedObject);
+	if (AsBabaObject)
+	{
+		TArray<UBabaRuleEffect*> IsYouEffects;
+		IsYouEffects = AsBabaObject->AppliedEffects.FilterByPredicate([&](UBabaRuleEffect* itr)
+			{
+				return itr->IsA(OtherObjectEffect);
+			});
+
+		if (IsYouEffects.Num() > 0)
+		{
+			ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+			if (GM)
+			{
+				AsBabaObject->UpdateObjectState(EBabaObjectState::Dead);
+				GM->OnYouObjectDied(AsBabaObject);
+
+				AffectedObject->UpdateObjectState(EBabaObjectState::Dead);
+				GM->OnYouObjectDied(AffectedObject);
+			}
+
+		}
+	}
+
+}
