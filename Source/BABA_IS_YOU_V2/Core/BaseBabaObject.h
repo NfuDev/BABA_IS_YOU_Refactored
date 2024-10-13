@@ -199,6 +199,13 @@ public:
 	
 	FBabaEvent OnBabaObjectOverlap;
 
+	/*when we transform from another type we save this tag so we know */
+	UPROPERTY()
+	FName TransformationTag;
+
+	UPROPERTY()
+	int32 TransformsApplied;
+
 	//to distinguish the objects that has changed and those hasn't
 	bool bBabaObjectUpdated;
 

@@ -11,6 +11,25 @@
 
 void UEffect_IsWin::AffectStarted()
 {
+	//filter effects on our affected object and if it has one "is you " rule then we lose the game.
+	TArray<UBabaRuleEffect*> IsYouEffects;
+	IsYouEffects = AffectedObject->AppliedEffects.FilterByPredicate([](UBabaRuleEffect* itr)
+		{
+			return itr->IsA(UEffect_IsYou::StaticClass());
+		});
+
+	if (IsYouEffects.Num() > 0)
+	{
+		ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (GM)
+		{
+			GM->BabaGameFinished(true);
+		}
+
+		return;
+	}
+
 	AffectedObject->OnBabaObjectOverlap.AddUObject(this, &UEffect_IsWin::OnOverlap);
 }
 
@@ -44,6 +63,24 @@ void UEffect_IsWin::OnOverlap(AActor* OverlappedObject)
 
 void UEffect_IsKill::AffectStarted()
 {
+	//filter effects on our affected object and if it has one "is you " rule then we lose the game.
+	TArray<UBabaRuleEffect*> IsYouEffects;
+	IsYouEffects = AffectedObject->AppliedEffects.FilterByPredicate([](UBabaRuleEffect* itr)
+		{
+			return itr->IsA(UEffect_IsYou::StaticClass());
+		});
+	if (IsYouEffects.Num() > 0)
+	{
+		ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (GM)
+		{
+			AffectedObject->UpdateObjectState(EBabaObjectState::Dead);
+			GM->OnYouObjectDied(AffectedObject);
+		}
+
+		return;
+	}
 	AffectedObject->OnBabaObjectOverlap.AddUObject(this, &UEffect_IsKill::OnOverlap);
 }
 

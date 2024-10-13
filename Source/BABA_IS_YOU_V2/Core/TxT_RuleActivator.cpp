@@ -13,12 +13,14 @@
 
 void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 {
-	CallsCount++;
-	UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR CALLS : called %d times"), CallsCount);
-
 	if (UpperTarget && UpDown_SwitchedToType)
 	{
-		PreformObjectTypeSwitch(UpDown_SwitchedToType, UpperTarget->Target, VIRTICAL, RVERSESWITCH);
+		UpperTarget->ContradictionVisuals->SetVisibility(false);
+
+		if(VerticalTransformTarget)
+			VerticalTransformTarget->ContradictionVisuals->SetVisibility(false);
+
+		PreformObjectTypeSwitch(UpDown_SwitchedToType, UpperTarget->Target, VIRTICAL, RVERSESWITCH,nullptr);
 		BottomRule = nullptr;
 		UpperTarget = nullptr;
 		UpDown_SwitchedToType = nullptr;
@@ -26,7 +28,12 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 	if (LeftTarget && LeftRight_SwitchedToType)
 	{
-		PreformObjectTypeSwitch(LeftRight_SwitchedToType, LeftTarget->Target, HOREZINTAL, PREFORMSWITCH);
+		LeftTarget->ContradictionVisuals->SetVisibility(false);
+
+		if (HorizentalTransformTarget)
+			HorizentalTransformTarget->ContradictionVisuals->SetVisibility(false);
+
+		PreformObjectTypeSwitch(LeftRight_SwitchedToType, LeftTarget->Target, HOREZINTAL, RVERSESWITCH,nullptr);//we dont care about transformation target if we were reversing transform
 		RightRule = nullptr;
 		LeftTarget = nullptr;
 		LeftRight_SwitchedToType = nullptr;
@@ -40,7 +47,6 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 	ABaseBabaObject* RightGrid = GetObjectInGrid(EPushDirection::Right, DummyVector);
 
 	bool ActivationState = false;
-	ATxT_RuleTarget* VerticalTransformTarget;
 	if (!(UpperTarget == UpperGrid && BottomRule == LowerGrid))//this checks if nothing changed we dont reactivate.
 	{
 		std::tie(ActivationState, VerticalTransformTarget) = TryActivate(UpperGrid, LowerGrid,true, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
@@ -53,7 +59,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		if (!ActivationState)
 		{
 			if (VerticalTransformTarget)
-				PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, VIRTICAL, PREFORMSWITCH);
+				PreformObjectTypeSwitch(UpperGrid->Target, VerticalTransformTarget->Target, VIRTICAL, PREFORMSWITCH, VerticalTransformTarget);
 
 			else if (BottomRule && UpperTarget)
 			{
@@ -65,7 +71,6 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		}
 	}
 
-	ATxT_RuleTarget* HorizentalTransformTarget;
 	if (!(LeftTarget == LeftGrid && RightRule == RightGrid))
 	{
 		std::tie(ActivationState, HorizentalTransformTarget) = TryActivate(LeftGrid, RightGrid,false, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
@@ -78,7 +83,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		if (!ActivationState)
 		{
 			if (HorizentalTransformTarget)
-				PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, HOREZINTAL, PREFORMSWITCH);
+				PreformObjectTypeSwitch(LeftGrid->Target, HorizentalTransformTarget->Target, HOREZINTAL, PREFORMSWITCH, HorizentalTransformTarget);
 
 			else if (RightRule && LeftTarget)
 			{
@@ -92,17 +97,16 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 }
 
 //moved here because i think the activator is the best place for this.
-void ATxT_RuleActivator::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids, bool ReverseTypeSwitch)
+void ATxT_RuleActivator::PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids, bool ReverseTypeSwitch, ATxT_RuleTarget* TransformationTarget)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Transformation Complete!"));
 
 	TSubclassOf<ABaseBabaObject>& SwapContext = bBetweenUpDownGrids? UpDown_SwitchedToType : LeftRight_SwitchedToType;
 	SwapContext = ToThis;
 
-	Internal_PreformObjectTypeSwitch(This, ToThis, ReverseTypeSwitch);
+	Internal_PreformObjectTypeSwitch(This, ToThis, bBetweenUpDownGrids, ReverseTypeSwitch, TransformationTarget);
 }
 
-void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool ReverseTypeSwitch)
+void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaObject> This, TSubclassOf<ABaseBabaObject> ToThis, bool bBetweenUpDownGrids, bool ReverseTypeSwitch, ATxT_RuleTarget* TransformationTarget)
 {
 
 	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -117,7 +121,44 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	TArray< ABaseBabaObject*> NewObjects;
-	
+
+	//if it has a tag of it self it means it is locked with 
+	if (FoundObjects.Num() > 0)
+	{
+		FName ActorTag = FoundObjects[0]->GetClass()->GetFName();
+		ABaseBabaObject* AsBabaObject = Cast<ABaseBabaObject>(FoundObjects[0]);
+		if (AsBabaObject->TransformationTag == ActorTag && !ReverseTypeSwitch)
+		{
+			//contradction!!!.
+			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Transformation Contradicted!"));
+			if (bBetweenUpDownGrids)
+			{
+				if (UpperTarget)
+				{
+					UpperTarget->ContradictionVisuals->SetVisibility(true);
+				}
+
+				if (TransformationTarget)
+				{
+					TransformationTarget->ContradictionVisuals->SetVisibility(true);
+				}
+			}
+			else
+			{
+				if (LeftTarget)
+				{
+					LeftTarget->ContradictionVisuals->SetVisibility(true);
+				}
+
+				if (TransformationTarget)
+				{
+					TransformationTarget->ContradictionVisuals->SetVisibility(true);
+				}
+			}
+			return;
+		}
+	}
+
 	if(GM)
 	{
 		FRuleTargets& AppliedRuleOnThisType = GM->GetRulesForObjectType(ToThis);
@@ -130,8 +171,12 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 			ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
 			FName ActorTag = This->GetFName();
 
-			if(!ReverseTypeSwitch)
-			   SwappedObject->Tags.Add(ActorTag);//we add the tag only when we are swapping type so we differ between orginal object type and transformed types.
+			if (!ReverseTypeSwitch)
+			{
+				SwappedObject->Tags.Add(ActorTag);//we add the tag only when we are swapping type so we differ between orginal object type and transformed types.
+				SwappedObject->TransformationTag = ActorTag;
+			}
+			  
 
 			NewObjects.Add(SwappedObject);
 
@@ -155,6 +200,9 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 			itr->PostUndo();
 			GM->BabaObjectsInLevel.Add(itr);
 		}
+
+		if(NewObjects.Num() > 0)
+			UE_LOG(LogTemp, Warning, TEXT("ACTIVATOR : Transformation Complete!"));
 
 		//GM->EvaluateAllRules();
 		GM->CheckGameFinished();//in case of swapping( Is you ) object with another none ( is you ) object.
