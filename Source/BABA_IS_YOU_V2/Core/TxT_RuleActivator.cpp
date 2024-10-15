@@ -13,7 +13,10 @@
 
 void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 {
-	if (UpperTarget && UpDown_SwitchedToType)
+	bool bIsVerticalMovement = (ChangeDirection == EPushDirection::UP || ChangeDirection == EPushDirection::Down);
+	bool bIsHorizentalMovement = (ChangeDirection == EPushDirection::Left || ChangeDirection == EPushDirection::Right);
+
+	if (UpperTarget && UpDown_SwitchedToType && bIsHorizentalMovement)
 	{
 		UpperTarget->ContradictionVisuals->SetVisibility(false);
 
@@ -26,7 +29,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		UpDown_SwitchedToType = nullptr;
 	}
 
-	if (LeftTarget && LeftRight_SwitchedToType)
+	if (LeftTarget && LeftRight_SwitchedToType && bIsVerticalMovement)
 	{
 		LeftTarget->ContradictionVisuals->SetVisibility(false);
 
@@ -47,7 +50,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 	ABaseBabaObject* RightGrid = GetObjectInGrid(EPushDirection::Right, DummyVector);
 
 	bool ActivationState = false;
-	if (!(UpperTarget == UpperGrid && BottomRule == LowerGrid))//this checks if nothing changed we dont reactivate.
+	if (!(UpperTarget == UpperGrid && BottomRule == LowerGrid) && bIsHorizentalMovement)//this checks if nothing changed we dont reactivate.
 	{
 		std::tie(ActivationState, VerticalTransformTarget) = TryActivate(UpperGrid, LowerGrid,true, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
 			{
@@ -71,7 +74,7 @@ void ATxT_RuleActivator::TxTDoYourThing(EPushDirection ChangeDirection)
 		}
 	}
 
-	if (!(LeftTarget == LeftGrid && RightRule == RightGrid))
+	if (!(LeftTarget == LeftGrid && RightRule == RightGrid) && bIsVerticalMovement)
 	{
 		std::tie(ActivationState, HorizentalTransformTarget) = TryActivate(LeftGrid, RightGrid,false, [this](ATxT_RuleHolder* ruleHolder, ATxT_RuleTarget* target)
 			{

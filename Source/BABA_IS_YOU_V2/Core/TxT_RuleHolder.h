@@ -15,8 +15,8 @@ class BABA_IS_YOU_V2_API ATxT_RuleHolder : public ABabaTextObjectBase
 	GENERATED_BODY()
 	
 public:
-	
-	ATxT_RuleHolder() { RuleID = FGuid(); };
+
+	ATxT_RuleHolder() { RuleID = FGuid::NewGuid(); };
 
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;

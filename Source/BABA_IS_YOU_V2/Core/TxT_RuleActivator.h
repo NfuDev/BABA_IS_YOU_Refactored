@@ -22,7 +22,7 @@ public:
 
 	/*Base Baba Object Interface*/
 	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection);};
-	virtual void PostUndo() override { TxTDoYourThing(EPushDirection()); };
+	virtual void PostUndo() override { TxTDoYourThing(EPushDirection::UP); TxTDoYourThing(EPushDirection::Right); };
 	/*Base Baba Object Interface*/
 
 	/*Base Baba Text Object Interface*/

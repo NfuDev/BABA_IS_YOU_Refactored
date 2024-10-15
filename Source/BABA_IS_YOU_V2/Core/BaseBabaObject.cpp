@@ -199,7 +199,9 @@ void ABaseBabaObject::CheckForOverlap()
 void ABaseBabaObject::UpdateObjectState(EBabaObjectState NewState)
 {
 	BabaObjectState = NewState;
+
 	VisualsComponent->SetVisibility(BabaObjectState == EBabaObjectState::ALive);
+	SetActorEnableCollision(BabaObjectState == EBabaObjectState::ALive);
 
 	if (BabaObjectState == EBabaObjectState::Dead)
 	{
@@ -237,7 +239,9 @@ ABaseBabaObject* ABaseBabaObject::GetObjectInGrid(EPushDirection Direction, FVec
 
 	outLoc = GetActorLocation() + (Dir * GM->GridSize);
 
-	bool bHit = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), outLoc, outLoc, GM->TraceSize, GM->PushChannel, false, ActorsToIgnore, GM->PushChecksDebugs, GridCheckResults, true, FColor::Red, FColor::Green);
+	TEnumAsByte<EDrawDebugTrace::Type> DebugType =  bIgnoreDebug ? GM->Ignored : GM->PushChecksDebugs;
+
+	bool bHit = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), outLoc, outLoc, GM->TraceSize, GM->PushChannel, false, ActorsToIgnore, DebugType, GridCheckResults, true, FColor::Red, FColor::Green);
 
 	if (bHit)
 	{
@@ -507,6 +511,7 @@ void FBabaObjectState::UpdateStructWithBaba(ABaseBabaObject* BabaObject)
 	ObjectLocation = BabaObject->GetActorLocation();
 	ObjectVisual = BabaObject->VisualsComponent->GetFlipbook();
 	BabaObjectState = BabaObject->BabaObjectState;
+	bTracable = BabaObject->GetActorEnableCollision();
 
 	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
 	if (AsObstacle)
@@ -527,6 +532,7 @@ void FBabaObjectState::UpdateBabaWithStruct(ABaseBabaObject* BabaObject)
 	BabaObject->VisualsComponent->SetFlipbook(ObjectVisual);
 	BabaObject->bBabaObjectUpdated = false;
 	BabaObject->UpdateObjectState(BabaObjectState);//here it is better to call the update state , since that was the plan to have one place for setting this value and make visuals accordingly(done)
+	BabaObject->SetActorEnableCollision(bTracable);
 
 	ABaseBabaObstacle* AsObstacle = Cast<ABaseBabaObstacle>(BabaObject);
 	if (AsObstacle)

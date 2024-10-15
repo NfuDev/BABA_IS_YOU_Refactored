@@ -83,6 +83,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	TEnumAsByte<EDrawDebugTrace::Type> PushChecksDebugs;
 
+	UPROPERTY()
+	TEnumAsByte<EDrawDebugTrace::Type> Ignored;
+
 	UPROPERTY(EditAnywhere, Category = "Baba Core")
 	TEnumAsByte<EDrawDebugTrace::Type> OverlapChecksDebugs;
 

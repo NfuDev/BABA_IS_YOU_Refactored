@@ -14,7 +14,7 @@ UCLASS(HideDropDown)
 class BABA_IS_YOU_V2_API ABabaTextObjectBase : public ABaseBabaObject
 {
 	GENERATED_BODY()
-	
+
 	virtual void BeginPlay() override;
 public:
 

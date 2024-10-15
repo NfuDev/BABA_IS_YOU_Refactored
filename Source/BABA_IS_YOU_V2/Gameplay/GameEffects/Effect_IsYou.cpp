@@ -41,8 +41,18 @@ void UEffect_IsYou::AffectStarted()
 		AffectedObject->bBlockInput = false;
 		PC->PushInputComponent(InputComponent);*/
 		GM->RegisterYouObject(AffectedObject);
-
+		FVector NewLoc = AffectedObject->GetActorLocation();
+		NewLoc.Z = 0.1f;
+		AffectedObject->SetActorLocation(NewLoc);
 	}
+}
+
+void UEffect_IsYou::EffectCleanup()
+{
+	//should check if there are more than one "is you" applied so we don't set it to zero and ruin the "is you" location
+	FVector NewLoc = AffectedObject->GetActorLocation();
+	NewLoc.Z = 0.0f;
+	AffectedObject->SetActorLocation(NewLoc);
 }
 
 void UEffect_IsYou::MoveRight()

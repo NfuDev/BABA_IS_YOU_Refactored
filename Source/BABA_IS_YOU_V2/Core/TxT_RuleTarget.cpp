@@ -79,24 +79,7 @@ void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 		ABaseBabaObject* AsBabaObejct = Cast<ABaseBabaObject>(itr);
 		if (AsBabaObejct)
 		{
-			if (GM->bWasUndoMove)
-			{
-				//we remove last added rule if  it was undo move.
-				if (AsBabaObejct->AppliedRules.Num() > 0)
-				{
-					UBabaRule* _Rule = AsBabaObejct->AppliedRules[AsBabaObejct->AppliedRules.Num() - 1].WrappedRule;
-					AsBabaObejct->RemoveRuleEffectFromObject(_Rule);
-					GM->UnRegisterTargetFormRule(_Rule, Target);
-
-					if (_Rule->IsYouRule())
-					{
-						GM->IsYouObjects.Remove(AsBabaObejct);
-						GM->OnYouObjectDied(AsBabaObejct);
-					}
-				}
-				
-			}
-
+		
 			if(AsBabaObejct->ApplyRuleOnObject(RuleHolder->Rule, RuleHolder->RuleID))
 			{
 				ruleApplied = true;

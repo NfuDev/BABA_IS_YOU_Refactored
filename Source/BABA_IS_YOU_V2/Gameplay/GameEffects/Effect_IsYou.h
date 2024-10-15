@@ -20,7 +20,8 @@ public:
 	UEffect_IsYou() {};
 
 	virtual void AffectStarted() override;
-	
+	virtual void EffectCleanup() override;
+
 	void MoveRight();
 	void MoveLeft();
 	void MoveUP();

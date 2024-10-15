@@ -113,6 +113,9 @@ struct FBabaObjectState
 	UPROPERTY()
 	EBabaObjectState BabaObjectState;
 
+	UPROPERTY()
+	bool bTracable;
+
 };
 
 
@@ -154,6 +157,9 @@ public:
 	//exposed for testing only
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BabaIsYou")
 	TArray<UBabaRuleEffect*> AppliedEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BabaIsYou")
+	bool bIgnoreDebug = true;
 
 	/*mapped one to one with the effects so we can easily remove the effects wihtout searching*/
 	UPROPERTY()
