@@ -75,7 +75,9 @@ void ABaseBabaObject::SetTraceChannelResponce(ECollisionChannel Channel, ECollis
 
 bool ABaseBabaObject::Push(EPushDirection Direction)
 {
-	UE_LOG(LogTemp,Warning,TEXT("PUSH EVENT CHECK.!"))
+	UE_LOG(LogTemp, Warning, TEXT("PUSH EVENT CHECK.!"))
+
+	if (BabaObjectState == EBabaObjectState::Dead) return true;//if the object was dead we allow the pusher to move and we dont move.
 
 	if (!CanBePushed()) return false;//this means we have an effect that prevents the pushing, other wise it will be false if blocked
 
@@ -102,7 +104,16 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 			bBabaObjectUpdated = true;
 			return true;
 		}
-		else
+		else if (HasInteractableRule(NextTile))
+		{
+			PreChangeLocation();
+			SetActorLocation(NextGrid);
+			NextTile->PostChangeLocation(Direction);
+			PostChangeLocation(Direction);
+			bBabaObjectUpdated = true;
+			return true;
+		}
+		else 
 		{
 			return false;
 		}
@@ -142,6 +153,23 @@ bool ABaseBabaObject::CanBePushed()
 	}
 
 	return bCanBePushed;
+}
+
+bool ABaseBabaObject::HasInteractableRule(ABaseBabaObject* Tile)
+{
+	if (!Tile) return false;
+
+	for (FBabaRuleWrapper& RuleWrapper : AppliedRules)
+	{
+		for (FBabaRuleWrapper& IncomingRuleWrapper : Tile->AppliedRules)
+		{
+			if (RuleWrapper.WrappedRule->CanInteractWith(IncomingRuleWrapper.WrappedRule))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 bool ABaseBabaObject::Effectcontradict(UBabaRuleEffect* Effect)

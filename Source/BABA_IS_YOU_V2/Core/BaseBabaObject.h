@@ -221,7 +221,7 @@ public:
 private:
 	
 	bool CanBePushed();
-	
+	bool HasInteractableRule(ABaseBabaObject* Tile);//if the object is pushable or not pushable we look for rule that interact with our rules and if so then we ignore the stop rules and let them overlap
 };
 
 

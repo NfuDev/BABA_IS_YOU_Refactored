@@ -25,6 +25,16 @@ public:
 	/*effects that if they were present on the target we send warning and the rule will fail to apply*/
 	UPROPERTY(EditAnywhere, Category = "Baba Rules")
 	TArray<UBabaRule*> ContradictedRules;
+
+	//effect that has one of these rule we force overlap with.
+	UPROPERTY(EditAnywhere, Category = "Baba Rules")
+	TArray<UBabaRule*> InteractableRules;
+
+	bool CanInteractWith(const UBabaRule* OtherRule)
+	{
+		return InteractableRules.Contains(OtherRule);
+	}
+
 	/*
 	* the rule should have a list of affected objects so we can call remove effect from object and pass the rule and pass the object reference 
 	* and the rule will check for it in the list and remove the effect

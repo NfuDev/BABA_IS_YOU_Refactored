@@ -122,11 +122,15 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 
 	TArray< ABaseBabaObject*> NewObjects;
 
-	//if it has a tag of it self it means it is locked with 
+	//if it has a tag of it self it means it is locked with OR the obejct is dead so we prevent the switch.
 	if (FoundObjects.Num() > 0)
 	{
 		FName ActorTag = FoundObjects[0]->GetClass()->GetFName();
 		ABaseBabaObject* AsBabaObject = Cast<ABaseBabaObject>(FoundObjects[0]);
+
+		if (AsBabaObject->BabaObjectState == EBabaObjectState::Dead)
+			return;
+	
 		if (AsBabaObject->TransformationTag == ActorTag && !ReverseTypeSwitch)
 		{
 			//contradction!!!.
@@ -171,6 +175,7 @@ void ATxT_RuleActivator::Internal_PreformObjectTypeSwitch(TSubclassOf<ABaseBabaO
 			ABaseBabaObject* SwappedObject = GetWorld()->SpawnActor<ABaseBabaObject>(ToThis, itr->GetActorTransform(), SpawnParams);
 			FName ActorTag = This->GetFName();
 
+			
 			if (!ReverseTypeSwitch)
 			{
 				SwappedObject->Tags.Add(ActorTag);//we add the tag only when we are swapping type so we differ between orginal object type and transformed types.
