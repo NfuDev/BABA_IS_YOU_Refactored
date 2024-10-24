@@ -25,29 +25,30 @@ void ATxT_RuleTarget::TxTDoYourThing(EPushDirection ChangeDirection)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 
 
-	FVector DummyVector = FVector();
-	 LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
+	//FVector DummyVector = FVector();
+	// LastAlingedActivatorRight = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Right, DummyVector));
 
-	 LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
+	// LastAlingedActivatorBottom = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Down, DummyVector));
 
-	 LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+	// LastAlingedActivatorUp = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
 
-	 LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+	// LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
 
-	if (LastAlingedActivatorRight)
-		LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
+	//if (LastAlingedActivatorRight)
+	//	LastAlingedActivatorRight->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorBottom)
-		LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
+	//if (LastAlingedActivatorBottom)
+	//	LastAlingedActivatorBottom->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorUp)
-		LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
+	//if (LastAlingedActivatorUp)
+	//	LastAlingedActivatorUp->TxTDoYourThing(ChangeDirection);
 
-	if (LastAlingedActivatorLeft)
-		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
+	//if (LastAlingedActivatorLeft)
+	//	LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 
+//add internal function to do this, and this function should for loop on targets and call the interal function on them
 void ATxT_RuleTarget::ApplyRuleOnTarget(ATxT_RuleHolder* RuleHolder)
 {
 

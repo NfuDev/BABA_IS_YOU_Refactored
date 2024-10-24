@@ -16,16 +16,16 @@ void ATxT_RuleHolder::TxTDoYourThing(EPushDirection ChangeDirection)
 	if (LastAlingedActivatorLeft && bIsVerticalMovement)
 		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 
-	FVector DummyVector = FVector();
-	  LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+	//FVector DummyVector = FVector();
+	//  LastAlingedActivatorLeft = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::Left, DummyVector));
 
-	  LastAlingedActivatorUpper = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+	//  LastAlingedActivatorUpper = Cast<ATxT_RuleActivator>(GetObjectInGrid(EPushDirection::UP, DummyVector));
 
-	//try trigger new activator if found
-	if (LastAlingedActivatorUpper)
-		LastAlingedActivatorUpper->TxTDoYourThing(ChangeDirection);
-	if (LastAlingedActivatorLeft)
-		LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
+	////try trigger new activator if found
+	//if (LastAlingedActivatorUpper)
+	//	LastAlingedActivatorUpper->TxTDoYourThing(ChangeDirection);
+	//if (LastAlingedActivatorLeft)
+	//	LastAlingedActivatorLeft->TxTDoYourThing(ChangeDirection);
 }
 
 bool ATxT_RuleHolder::CheckForContradiction(ABaseBabaObject* IncomingTarget)

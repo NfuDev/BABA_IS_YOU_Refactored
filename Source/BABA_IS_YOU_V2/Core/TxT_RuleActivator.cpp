@@ -252,3 +252,55 @@ std::tuple<bool, ATxT_RuleTarget*> ATxT_RuleActivator::TryActivate(ATxT_RuleTarg
 
 	return std::tuple<bool, ATxT_RuleTarget*>();
 }
+
+//####################################################################################
+//########## AND OPERATOR ############################################################
+
+void ATxT_AND_Activator::TxTDoYourThing(EPushDirection ChangeDirection)
+{
+	UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : and is Called"));
+
+	FVector DummyVector = FVector();
+	ABabaTextObjectBase* UpperGrid = Cast<ABabaTextObjectBase>(GetObjectInGrid(EPushDirection::UP, DummyVector));
+	ABabaTextObjectBase* LowerGrid = Cast<ABabaTextObjectBase>(GetObjectInGrid(EPushDirection::Down, DummyVector));
+
+	ABabaTextObjectBase* LeftGrid = Cast<ABabaTextObjectBase>(GetObjectInGrid(EPushDirection::Left, DummyVector));
+	ABabaTextObjectBase* RightGrid = Cast<ABabaTextObjectBase>(GetObjectInGrid(EPushDirection::Right, DummyVector));
+
+	if (LeftGrid && RightGrid)
+	{
+		ATxT_RuleTarget* AsSecondaryTarget = Cast<ATxT_RuleTarget>(LeftGrid);
+		ATxT_RuleTarget* AsMainTarget = Cast<ATxT_RuleTarget>(RightGrid);
+
+		if (AsSecondaryTarget && AsMainTarget)
+		{
+			AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
+			for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+			{
+				AsMainTarget->AdditionalTargets.Add(itr);
+			}
+			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
+		}
+
+		AsMainTarget->TxTDoYourThing(ChangeDirection);
+	}
+
+	if (UpperGrid && LowerGrid)
+	{
+		ATxT_RuleTarget* AsSecondaryTarget = Cast<ATxT_RuleTarget>(UpperGrid);
+		ATxT_RuleTarget* AsMainTarget = Cast<ATxT_RuleTarget>(LowerGrid);
+
+		if (AsSecondaryTarget && AsMainTarget)
+		{
+			AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
+			for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+			{
+				AsMainTarget->AdditionalTargets.Add(itr);
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
+		}
+
+		AsMainTarget->TxTDoYourThing(ChangeDirection);
+	}
+}

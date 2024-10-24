@@ -27,6 +27,9 @@ public:
 	void MoveUP();
 	void MoveDown();
 
+	//since the last move will happen always is the "Is YOu" object move then it is the best place to tell the game mode that all objects are updated so we evaluate new rules.
+	void InvokeGameStateChanged();
+
 	UPROPERTY()
 	UInputComponent* InputComponent;
 

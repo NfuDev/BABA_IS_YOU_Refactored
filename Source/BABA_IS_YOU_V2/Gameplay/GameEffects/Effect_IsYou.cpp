@@ -2,7 +2,8 @@
 
 
 #include "Effect_IsYou.h"
-#include "../..//Core/BaseBabaObject.h"
+#include "../..//Core/BaseBabaObject.h" //already included in the text base but i wanted to keep it here to know i explicitly want this header.
+#include "../..//Core/BabaTextObjectBase.h"
 #include "../../Core/BabaPlayerController.h"
 #include "../..//Core/BIY_GameMode.h"
 
@@ -77,6 +78,9 @@ void UEffect_IsYou::MoveRight()
 		{
 			AffectedObject->SetActorLocation(NextGrid);
 			AffectedObject->bBabaObjectUpdated = true;
+
+			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
+				InvokeGameStateChanged();
 		}
 	}
 
@@ -103,6 +107,9 @@ void UEffect_IsYou::MoveLeft()
 		{
 			AffectedObject->SetActorLocation(NextGrid);
 			AffectedObject->bBabaObjectUpdated = true;
+
+			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
+				InvokeGameStateChanged();
 		}
 	}
 }
@@ -128,6 +135,9 @@ void UEffect_IsYou::MoveUP()
 		{
 			AffectedObject->SetActorLocation(NextGrid);
 			AffectedObject->bBabaObjectUpdated = true;
+
+			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
+				InvokeGameStateChanged();
 		}
 	}
 }
@@ -153,8 +163,18 @@ void UEffect_IsYou::MoveDown()
 		{
 			AffectedObject->SetActorLocation(NextGrid);
 			AffectedObject->bBabaObjectUpdated = true;
+
+			if(NextTile->IsA(ABabaTextObjectBase::StaticClass()))
+			   InvokeGameStateChanged();
 		}
 	}
 
 
+}
+
+void UEffect_IsYou::InvokeGameStateChanged()
+{
+	ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GM)
+		GM->EvaluateAllRules();
 }

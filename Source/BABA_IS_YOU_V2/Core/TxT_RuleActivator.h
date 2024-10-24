@@ -21,7 +21,7 @@ class BABA_IS_YOU_V2_API ATxT_RuleActivator : public ABabaTextObjectBase
 public:
 
 	/*Base Baba Object Interface*/
-	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { TxTDoYourThing(ChangeDirection);};
+	virtual void PostChangeLocation(EPushDirection ChangeDirection) override { /*TxTDoYourThing(ChangeDirection);*/ };//now we wait for the game mode to invoke this and not when ever we move
 	virtual void PostUndo() override { TxTDoYourThing(EPushDirection::UP); TxTDoYourThing(EPushDirection::Right); };
 	/*Base Baba Object Interface*/
 
@@ -74,4 +74,20 @@ private:
 
 	//debugging only.
 	int32 CallsCount = 0;
+};
+
+
+/*
+* operator to stack multiple rules in one activation.
+*/
+UCLASS(HideDropDown)
+class BABA_IS_YOU_V2_API ATxT_AND_Activator : public ABabaTextObjectBase
+{
+	GENERATED_BODY()
+
+public:
+	/*Base Baba Text Object Interface*/
+	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
+	/*Base Baba Text Object Interface*/
+
 };
