@@ -282,7 +282,7 @@ void ATxT_AND_Activator::TxTDoYourThing(EPushDirection ChangeDirection)
 			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
 		}
 
-		AsMainTarget->TxTDoYourThing(ChangeDirection);
+		AsMainTarget->TryApplyOnAdditionalTargets();
 	}
 
 	if (UpperGrid && LowerGrid)
@@ -301,6 +301,6 @@ void ATxT_AND_Activator::TxTDoYourThing(EPushDirection ChangeDirection)
 			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
 		}
 
-		AsMainTarget->TxTDoYourThing(ChangeDirection);
+		AsMainTarget->TryApplyOnAdditionalTargets();
 	}
 }
