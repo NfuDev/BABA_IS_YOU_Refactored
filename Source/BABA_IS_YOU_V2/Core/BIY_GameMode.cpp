@@ -24,9 +24,14 @@ void ABIY_GameMode::BeginPlay()
 			BabaObjectsInLevel.Add(AsBabaObject);
 
 			ATxT_RuleActivator* AsActivator = Cast<ATxT_RuleActivator>(AsBabaObject);
+			ATxT_AND_Activator* AsAndOperator = Cast<ATxT_AND_Activator>(AsBabaObject);
 			if (AsActivator)
 			{
 				RuleActivatorsList.Add(AsActivator);
+			}
+			else if (AsAndOperator)
+			{
+				RuleActivatorsList.Add(AsAndOperator);
 			}
 		}
 	}

@@ -41,6 +41,8 @@ public:
 	
 	void TryApplyOnAdditionalTargets();
 
+	void RemoveAdditionalTargets();
+
 	UPROPERTY(VisibleAnywhere, Category = "Baba Debug")
 	class ATxT_RuleActivator* LastAlingedActivatorRight;
 

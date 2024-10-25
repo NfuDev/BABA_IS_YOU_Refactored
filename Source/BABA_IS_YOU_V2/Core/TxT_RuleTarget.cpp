@@ -173,3 +173,16 @@ void ATxT_RuleTarget::TryApplyOnAdditionalTargets()
 		}
 	}
 }
+
+void ATxT_RuleTarget::RemoveAdditionalTargets()
+{
+	if (LastAppliedRule)//see if we have applied rules on those targets , we remove them first before we clear the list
+	{
+		for (auto& itr : AdditionalTargets)
+		{
+			Internal_RemoveRuleFromTarget(LastAppliedRule, itr);
+		}
+	}
+
+	AdditionalTargets.Reset();
+}

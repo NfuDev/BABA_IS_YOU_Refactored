@@ -88,6 +88,13 @@ class BABA_IS_YOU_V2_API ATxT_AND_Activator : public ABabaTextObjectBase
 public:
 	/*Base Baba Text Object Interface*/
 	virtual void TxTDoYourThing(EPushDirection ChangeDirection) override;
+	virtual void PostUndo() override;
 	/*Base Baba Text Object Interface*/
 
+
+	UPROPERTY()
+	ATxT_RuleTarget* VerticalOperatedTarget;
+
+	UPROPERTY()
+	ATxT_RuleTarget* HorezintalOperatedTarget;
 };

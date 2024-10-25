@@ -274,15 +274,39 @@ void ATxT_AND_Activator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 		if (AsSecondaryTarget && AsMainTarget)
 		{
-			AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
-			for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+			if(HorezintalOperatedTarget != AsMainTarget)
 			{
-				AsMainTarget->AdditionalTargets.Add(itr);
+
+				AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
+				for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+				{
+					AsMainTarget->AdditionalTargets.Add(itr);
+				}
+				UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
 			}
-			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
 		}
 
-		AsMainTarget->TryApplyOnAdditionalTargets();
+		if (HorezintalOperatedTarget != AsMainTarget)
+		{
+			AsMainTarget->TryApplyOnAdditionalTargets();
+
+			if (HorezintalOperatedTarget)
+			{
+				HorezintalOperatedTarget->RemoveAdditionalTargets();
+			}
+
+			HorezintalOperatedTarget = AsMainTarget;
+		}
+		  
+	}
+
+	else
+	{
+		if (HorezintalOperatedTarget)
+		{
+			HorezintalOperatedTarget->RemoveAdditionalTargets();
+			HorezintalOperatedTarget = nullptr;
+		}
 	}
 
 	if (UpperGrid && LowerGrid)
@@ -292,15 +316,44 @@ void ATxT_AND_Activator::TxTDoYourThing(EPushDirection ChangeDirection)
 
 		if (AsSecondaryTarget && AsMainTarget)
 		{
-			AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
-			for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+			if(VerticalOperatedTarget != AsMainTarget)
 			{
-				AsMainTarget->AdditionalTargets.Add(itr);
-			}
+				AsMainTarget->AdditionalTargets.Add(AsSecondaryTarget->Target);
+				for (auto& itr : AsSecondaryTarget->AdditionalTargets)
+				{
+					AsMainTarget->AdditionalTargets.Add(itr);
+				}
 
-			UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("THEAND OPERATOR : Added %s additional target on %s "), *AsSecondaryTarget->Target->GetName(), *AsMainTarget->GetName());
+			}
 		}
 
-		AsMainTarget->TryApplyOnAdditionalTargets();
+		if (VerticalOperatedTarget != AsMainTarget)
+		{
+			AsMainTarget->TryApplyOnAdditionalTargets();
+
+			if (VerticalOperatedTarget)
+			{
+				VerticalOperatedTarget->RemoveAdditionalTargets();
+			}
+
+			VerticalOperatedTarget = AsMainTarget;
+		}
+	
 	}
+
+	else
+	{
+		if (VerticalOperatedTarget)
+		{
+			VerticalOperatedTarget->RemoveAdditionalTargets();
+			VerticalOperatedTarget = nullptr;
+		}
+	}
+
+}
+
+void ATxT_AND_Activator::PostUndo()
+{
+	TxTDoYourThing(EPushDirection());
 }
