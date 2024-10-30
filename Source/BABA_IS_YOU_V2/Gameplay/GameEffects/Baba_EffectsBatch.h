@@ -21,7 +21,8 @@ class BABA_IS_YOU_V2_API UEffect_IsWin : public UBabaRuleEffect
 	GENERATED_BODY()
 	
 	virtual void AffectStarted() override;
-
+	virtual bool IsPushable() override { return false; };
+	virtual bool IsWining() override { return true; };
 	virtual void OnOverlap(AActor* OverlappedObject) override;
 
 };

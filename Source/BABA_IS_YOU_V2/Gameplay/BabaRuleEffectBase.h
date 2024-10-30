@@ -38,7 +38,8 @@ public:
 	virtual void PreOverlap(ABaseBabaObject* IncomingObject) {};
 	virtual void OnOverlap(AActor* OverlappedObject) {};
 	virtual void RequestMove(FVector Direction, TFunction<void()> Callback) { Callback; };
-	virtual bool IsPushable() { return true; }
+	virtual bool IsPushable() { return true; };
+	virtual bool IsWining() { return false; };
 	virtual void UnRegisterTarget();//default behaviour is to nullify the affected target and mark as garbage so the GC would pick it up in the next cycle
 	/*interactions*/
 	

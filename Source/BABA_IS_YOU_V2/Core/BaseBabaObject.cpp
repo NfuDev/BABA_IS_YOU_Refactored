@@ -79,6 +79,8 @@ bool ABaseBabaObject::Push(EPushDirection Direction)
 
 	if (BabaObjectState == EBabaObjectState::Dead) return true;//if the object was dead we allow the pusher to move and we dont move.
 
+	if (HasWinningEffect()) return true;
+
 	if (!CanBePushed()) return false;//this means we have an effect that prevents the pushing, other wise it will be false if blocked
 
 	UE_LOG(LogTemp, Warning, TEXT("PUSH EVENT TRIGGER.!"))
@@ -168,6 +170,16 @@ bool ABaseBabaObject::HasInteractableRule(ABaseBabaObject* Tile)
 				return true;
 			}
 		}
+	}
+	return false;
+}
+
+bool ABaseBabaObject::HasWinningEffect()
+{
+	for (UBabaRuleEffect* Effect : AppliedEffects)
+	{
+		if (Effect->IsWining())
+			return true;
 	}
 	return false;
 }
