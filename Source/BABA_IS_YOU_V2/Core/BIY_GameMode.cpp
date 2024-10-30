@@ -81,7 +81,7 @@ void ABIY_GameMode::OnYouObjectDied(ABaseBabaObject* Object)
 	}
 }
 
-inline void ABIY_GameMode::CheckGameFinished()
+void ABIY_GameMode::CheckGameFinished()
 {
 	if (IsYouObjects.Num() == 0)
 	{

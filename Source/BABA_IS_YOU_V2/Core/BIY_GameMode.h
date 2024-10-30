@@ -116,7 +116,7 @@ public:
 	void RegisterYouObject(ABaseBabaObject* newObject);
 	void UnRegisterYouObject(ABaseBabaObject* Object);
 	void OnYouObjectDied(ABaseBabaObject* Object);
-	inline void CheckGameFinished();//since we don't event use the object in this new code , i used new function with better name to call for when the game does some changes and want to check if the game has finished.
+	void CheckGameFinished();//since we don't event use the object in this new code , i used new function with better name to call for when the game does some changes and want to check if the game has finished.
 
 	/*saves what rule affects which objects*/
 	UPROPERTY()
