@@ -130,7 +130,7 @@ void UEffect_DistructiveInteraction::OnOverlap(AActor* OverlappedObject)
 				return itr->IsA(OtherObjectEffect);
 			});
 
-		if (IsYouEffects.Num() > 0)
+		if (IsYouEffects.Num() > 0 || !IsValid(OtherObjectEffect))
 		{
 			ABIY_GameMode* GM = Cast< ABIY_GameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 

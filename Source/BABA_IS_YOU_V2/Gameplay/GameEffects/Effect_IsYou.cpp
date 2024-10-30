@@ -77,6 +77,7 @@ void UEffect_IsYou::MoveRight()
 		if (NextTile->Push(EPushDirection::Right))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->CheckForOverlap();
 			AffectedObject->bBabaObjectUpdated = true;
 
 			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
@@ -106,6 +107,7 @@ void UEffect_IsYou::MoveLeft()
 		if (NextTile->Push(EPushDirection::Left))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->CheckForOverlap();
 			AffectedObject->bBabaObjectUpdated = true;
 
 			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
@@ -134,6 +136,7 @@ void UEffect_IsYou::MoveUP()
 		if (NextTile->Push(EPushDirection::UP))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->CheckForOverlap();
 			AffectedObject->bBabaObjectUpdated = true;
 
 			if (NextTile->IsA(ABabaTextObjectBase::StaticClass()))
@@ -162,6 +165,7 @@ void UEffect_IsYou::MoveDown()
 		if (NextTile->Push(EPushDirection::Down))
 		{
 			AffectedObject->SetActorLocation(NextGrid);
+			AffectedObject->CheckForOverlap();
 			AffectedObject->bBabaObjectUpdated = true;
 
 			if(NextTile->IsA(ABabaTextObjectBase::StaticClass()))
