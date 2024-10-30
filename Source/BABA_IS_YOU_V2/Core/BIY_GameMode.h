@@ -140,6 +140,9 @@ public:
 
 	bool bWasUndoMove = false;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Gameplay")
+	void OnBabaUndo();
+
 	//###################################################
 	//################# DEBUGGING #######################
 	//###################################################

@@ -155,7 +155,7 @@ void ABIY_GameMode::UndoMove()
 	{
 		itr->PostUndo();
 	}
-
+	OnBabaUndo();
 	bWasUndoMove = false;
 }
 
