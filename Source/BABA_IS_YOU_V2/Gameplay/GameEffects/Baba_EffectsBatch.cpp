@@ -127,7 +127,7 @@ void UEffect_DistructiveInteraction::OnOverlap(AActor* OverlappedObject)
 		TArray<UBabaRuleEffect*> IsYouEffects;
 		IsYouEffects = AsBabaObject->AppliedEffects.FilterByPredicate([&](UBabaRuleEffect* itr)
 			{
-				return itr->IsA(OtherObjectEffect);
+				return IsValid(OtherObjectEffect) ? itr->IsA(OtherObjectEffect) : false;
 			});
 
 		if (IsYouEffects.Num() > 0 || !IsValid(OtherObjectEffect))

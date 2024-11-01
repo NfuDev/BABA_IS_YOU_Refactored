@@ -12,6 +12,14 @@ ABIY_GameMode::ABIY_GameMode()
 
 void ABIY_GameMode::BeginPlay()
 {
+	Super::BeginPlay();
+
+	InitBabaGame();
+}
+
+
+void ABIY_GameMode::InitBabaGame()
+{
 	TArray<AActor*> BabaObjects;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseBabaObject::StaticClass(), BabaObjects);
 
@@ -135,6 +143,7 @@ FRuleTargets& ABIY_GameMode::GetRulesForObjectType(TSubclassOf<ABaseBabaObject> 
 
 void ABIY_GameMode::TryUpdateBabaGameState()
 {
+	DebugInputs();
 	for (auto& itr : BabaObjectsInLevel)
 	{
 		itr->RecordBabaObjectState();

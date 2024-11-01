@@ -109,6 +109,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Gameplay")
 	void BabaGameFinished(bool bWin);
 
+	UFUNCTION(BlueprintCallable, Category = "Baba Gameplay")
+	void InitBabaGame();
+
 	/*this will holds how many object is a 'YOU' and when this list is cleared the game is over*/
 	/*take into account if the 'YOU' is dead or alive because even if in the list but dead it should end the game*/
 	UPROPERTY()
@@ -155,5 +158,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Is You|Debugging")
 	void DebugPreviusLocation(FVector location, int entries, UPaperFlipbook* Visuals);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Baba Is You|Debugging")
+	void DebugInputs();
 
 };
